@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "beefood-439405",
+  "private_key_id": "f0ea16d9a7deb10c58d28d89fe1d11c6c8ff2c46",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQClFaKKj6vK3U8i\nurbZuyyGZ6b+dw6OdNXJxGgVGdB08hyFTsOOpCz40jFmfUaRgZHBe6SLu730B+Iu\neNHOKTFebvSHV2B6CflKLWITYze/s0cVaYbcgsT7jOw1lH3WRV79cVZkkyiyC36w\n2Q8/IvD2w+3Ivi7q6/kbQIgbyv+4UukLHA6DuIvYKYgMC1PHf2i+TnZn8Ifi0jO9\nGHpTl3o7tYGv7usSfaiK5XidywyKV4nUdz4sYyIhCeGAS8EBR2anNeVbWYO0PnMN\n8lFyMWvK7s5YNHlU3n0pXEOweHnxuMPXIdLfWx2EgiA92abMIHb+2YCT5SDooY+G\nH8+XWKOrAgMBAAECggEATsZxJp+CQa6zeYYRhPqNN6G0jU7wskfMUJiZdiA4WeXC\neFZqeOGc2CstCZQUHZDvpZ1Dmq4+6XjtlHFw5GjBtydJJmAqmHGz9JKNb2T0EFUT\nQYN2qDj6mHLZsIOoPJwjxNrVd+7FB5j2npslbGJXC9nY2Obv6ogp+bgkeua2ehTJ\nwAwk41zXOBCcIzNQp7GEyHxyK452eWZmHnwDB3msWjC0tya8H+8tV+ueN7vo58AK\nrepy3srG7cYqUFTwgdBL6VPL0DagqzhkY96fq3nPjXSpUNYtqyP6LzElZkbt+Cp6\nNU7wKZXTrU0BPUK/tiq3/2oCPCxmzr3mmVnvlbGniQKBgQDZdTbh/WD01w9IztJa\nSx1+vZm0NCmCg/PR2S0tmJ60ne4my0On8VBRRISiBYt+jw+rrubkeyjPehsRyKfJ\nL8TNt7Dns0S6bibxoFBHFmCzbKhkd2PTBbUnSpfUdEwJJyxGJcOfpUDAvn9HLtr1\nyXKk0lX8LiZov8Aqe8mAbJ6RrQKBgQDCWBFBhITWUL7KqgsPg6ZziyEJjRsVHxvx\n4e/jSn+4GjaYVIS6hD3GrVNOQzpJKjQDZK07c4qMNhrToEzarag9H/M678t/hxA7\nP2xLjQq1m38Hl+HT72vT047aOwAUKoaT4OtKKv/8K3RPK/1dlGb2O2VSbcMVKM0M\nvHe/3cKltwKBgHs9mOsfBJH+SCVFQaX2qDKqFbAxV80mJ0qowJf0xQ0r7EqELEXD\n13cXU+vXJKWHQqRULXsT6Z8cXrcHdz/oGKtWDaZizPKzdtK9voFrR0aosA6wMxzn\nQTGRbtbzShxt3QOsZ1/U8gvKaqvW/DUMBDMxGZYgOZhoA+qP2TU1WfDJAoGAGMCU\nug6ByLYSBsfvjrNK0O6Ib6n8KA2FRqJrJjzH1Y/pIi+plAPhxlsvAAnJ86WfaEs7\nURYfMEp30jpZb4Ssp9RY60m9VmnCZHlodprpIUZDwJjUl2SoDBum1x6qnObpqw37\nib++SMTUFH1a0L9k+bmI5x25ugkvTI74hYReFTMCgYAtJ4CAbg+8qS+35AvFddV1\ncOtDO41UbHtJslYysJYE+b2LN2NmD7asdj+WgxvLX1SsjmvifudhBtmMjRQsxGdc\ncEyKAqLUe5UzoU+enlnQQuB2ULJhF8bVohTCXDmSXy0Q5zn3pla/Ov+3YK7lQ9uk\nD/gB5ZDZtV8m3xSv+MkCjA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "beefood@beefood-439405.iam.gserviceaccount.com",
+  "client_id": "114916794934380924715",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/beefood%40beefood-439405.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
