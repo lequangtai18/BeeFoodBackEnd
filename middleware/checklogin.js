@@ -23,7 +23,7 @@ exports.yeu_cau_dang_nhap = async (req, res, next) => {
     }
   } else {
     console.log("chưa đăng nhập");
-    return res.render("auth/authorize", {
+    return res.render("authorize/authorize", {
       message: "",
       req: req,
     });
