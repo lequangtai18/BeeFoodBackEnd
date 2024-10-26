@@ -16,5 +16,6 @@ router.post("/users/login", apiU.login);
 router.post("/users/update/:id", apiU.update);
 
 router.post("/product/addProduct", upload.single('image'), apiProduct.addProduct);
+router.post("/product/editProduct/:id", upload.single("image"),apiProduct.editDataProduct);
 
 module.exports = router;

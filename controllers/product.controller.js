@@ -73,6 +73,7 @@ exports.editProduct = async (req, res, next) => {
   });
   return product;
 };
+
 exports.dataProductRestaurant = async (req, res, next) => {
   const id = req.session.user?._id;
   try {
