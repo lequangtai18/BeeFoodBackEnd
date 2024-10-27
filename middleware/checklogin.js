@@ -1,3 +1,4 @@
+const sanPhamDangDuyetModel = require("../models/sanPhamDangDuyet.model");
 
 exports.yeu_cau_dang_nhap = async (req, res, next) => {
   if (req.session.user) {

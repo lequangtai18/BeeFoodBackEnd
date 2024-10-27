@@ -47,23 +47,6 @@ router.get("/editProduct/:id", async function (req, res, next) {
   }
 });
 
-// // Cập nhật sản phẩm
-// router.post("/editProduct/:id", async function (req, res, next) {
-//   try {
-//     const productId = req.params.id;
-//     const updatedProductData = req.body;
-//     const data = await productModel.findByIdAndUpdate(productId, updatedProductData, { new: true });
-
-//     if (!data) {
-//       return res.status(404).send("Product not found");
-//     }
-//     res.redirect("/showProduct"); // Chuyển hướng sau khi cập nhật
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Server Error");
-//   }
-// });
-
 router.get("/listproduct", product.getListProduct);
 
 module.exports = router;
