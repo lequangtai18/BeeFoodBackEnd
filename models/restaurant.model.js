@@ -2,9 +2,10 @@ const { default: mongoose } = require("mongoose");
 var db = require("./db");
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const chuoi_ky_tu_bi_mat = process.env.TOKEN_SEC_KEY;
-console.log('Giá trị chuỗi bí mật:', chuoi_ky_tu_bi_mat);
 const bcrypt = require("bcrypt");
+
+// Định nghĩa secret
+const secret = 'secret';
 const restaurantSchema = new mongoose.Schema(
   {
     name: String,
@@ -26,6 +27,7 @@ const restaurantSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
 /**
  * Hàm tạo token để đăng nhập với API
  * @returns {Promise<*>}
@@ -33,14 +35,12 @@ const restaurantSchema = new mongoose.Schema(
 restaurantSchema.methods.generateAuthToken = async function () {
   const restaurant = this;
 
-  if (!chuoi_ky_tu_bi_mat) {
-    throw new Error('Chuỗi bí mật không hợp lệ.');
-  }
-
   console.log(restaurant);
+
+  // Tạo token sử dụng secret
   const token = jwt.sign(
     { _id: restaurant._id, account: restaurant.account },
-    chuoi_ky_tu_bi_mat
+    secret // Sử dụng secret ở đây
   );
 
   restaurant.token = token;
@@ -60,7 +60,7 @@ restaurantSchema.statics.findByCredentials = async (account, password) => {
   return restaurant;
 };
 
-restaurantModel = db.mongoose.model("restaurantModel", restaurantSchema);
+const restaurantModel = db.mongoose.model("restaurantModel", restaurantSchema);
 module.exports = {
   restaurantModel,
 };
