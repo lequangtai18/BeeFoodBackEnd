@@ -3,7 +3,7 @@ const firebase = require("../firebase/index.js");
 const { productModel } = require("../models/product.model.js");
 var restaurantModel = require("../models/restaurant.model");
 const userModel = require("../models/users.model.js");
-// var historyModel = require("../models/history");
+var historyModel = require("../models/history");
 
 exports.addProduct = async (req, res, next) => {
   const id = req.session.user?._id;

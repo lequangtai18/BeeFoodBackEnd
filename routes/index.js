@@ -3,6 +3,7 @@ const session = require("express-session");
 const { yeu_cau_dang_nhap } = require("../middleware/checklogin");
 var product = require("../controllers/product.controller");
 var productModel = require("../models/product.model");
+const history = require("../controllers/historyOderControllers");
 
 var router = express.Router();
 
@@ -47,6 +48,13 @@ router.get("/editProduct/:id", async function (req, res, next) {
   }
 });
 
+router.get("/revenue", function (req, res, next) {
+  res.render("revenue/showrevenue", { title: "Express", req: req });
+});
+
 router.get("/listproduct", product.getListProduct);
+router.get("/adminRevenue", product.getRevenue);
+router.get("/showrevenue", history.getRevenueRestaurant);
+
 
 module.exports = router;
