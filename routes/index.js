@@ -1,8 +1,10 @@
 var express = require("express");
 const session = require("express-session");
 const { yeu_cau_dang_nhap } = require("../middleware/checklogin");
+const mongoose = require("mongoose");
 var product = require("../controllers/product.controller");
 var productModel = require("../models/product.model");
+var sanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
 
 var router = express.Router();
 
@@ -48,5 +50,12 @@ router.get("/editProduct/:id", async function (req, res, next) {
 });
 
 router.get("/listproduct", product.getListProduct);
+
+//Duyệt sản phẩm
+router.get("/listCensor/:id", sanPhamDangDuyet.listForRes);
+router.get("/listCensor/huy/:id", sanPhamDangDuyet.huy);
+router.get("/censorship", sanPhamDangDuyet.getListProduct);
+router.get("/censorship/duyet/:id", sanPhamDangDuyet.duyet);
+router.get("/censorship/xoa/:id", sanPhamDangDuyet.xoa);
 
 module.exports = router;
