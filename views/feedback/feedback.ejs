@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh sách Sản Phẩm và Bình Luận</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Căn chỉnh và tạo không gian cho container */
+        .container-main {
+            margin-top: 80px;
+            margin-left: 320px;
+            height: 100vh;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Định dạng bảng sản phẩm */
+        .table {
+            margin-top: 20px;
+        }
+
+        .table thead th {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+        }
+
+        .table tbody td, .table tbody th {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        /* Chiều rộng cột */
+        .table .col-stt {
+            width: 5%;
+        }
+        .table .col-name {
+            width: 30%;
+        }
+        .table .col-image {
+            width: 65%;
+        }
+
+        /* Định dạng hình ảnh */
+        .table img {
+            max-width: 150px; /* Tăng kích thước ảnh */
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hiệu ứng khi di chuột vào sản phẩm */
+        .product-name:hover {
+            color: #0056b3;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Định dạng modal */
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+            border-bottom: none;
+        }
+
+        .modal-body {
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* Nút đóng modal */
+        .close {
+            color: white;
+            opacity: 0.8;
+        }
+
+        .close:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../inc/header-user.ejs') %>
+    <div style="margin-top: 80px; height: 100vh; margin-left: 320px; flex: 1">
+        <% 
+          const data = [
+              {
+                  name: "Sản Phẩm Mẫu",
+                  image: "https://img.freepik.com/premium-photo/beautifull-nature-iamge_1018057-533.jpg",
+                  listComment: [
+                      { username: "user1", title: "Bình luận 1" },
+                      { username: "user2", title: "Bình luận 2" },
+                  ]
+              }
+          ]; 
+        %>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Tên Sản Phẩm</th>
+                    <th scope="col">Ảnh</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i = 0; i < data.length; i++) { %>
+                <tr>
+                    <th scope="row"><%= i + 1 %></th>
+                    <td class="product-name" data-index="<%= i %>"><%= data[i].name %></td>
+                    <td>
+                        <img
+                            src="<%= data[i].image %>"
+                            alt="<%= data[i].name %>"
+                            style="max-width: 100px"
+                        />
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Phần còn lại của mã HTML và JavaScript -->
+</body>
+
+
+</html>
