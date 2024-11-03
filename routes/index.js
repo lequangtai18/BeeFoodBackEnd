@@ -4,6 +4,7 @@ const { yeu_cau_dang_nhap } = require("../middleware/checklogin");
 const mongoose = require("mongoose");
 var product = require("../controllers/product.controller");
 var productModel = require("../models/product.model");
+const history = require("../controllers/historyOderControllers");
 var sanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
 var comment = require("../controllers/comment.controller");
 
@@ -50,7 +51,14 @@ router.get("/editProduct/:id", async function (req, res, next) {
   }
 });
 
+router.get("/revenue", function (req, res, next) {
+  res.render("revenue/showrevenue", { title: "Express", req: req });
+});
+
 router.get("/listproduct", product.getListProduct);
+router.get("/adminRevenue", product.getRevenue);
+router.get("/showrevenue", history.getRevenueRestaurant);
+
 
 //Duyệt sản phẩm
 router.get("/listCensor/:id", sanPhamDangDuyet.listForRes);

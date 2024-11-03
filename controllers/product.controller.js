@@ -2,7 +2,7 @@ var productModel = require("../models/product.model");
 var restaurantModel = require("../models/restaurant.model");
 var userModel = require("../models/users.model.js");
 
-// const { History } = require("../models/history.js");
+const { History } = require("../models/history.js");
 // const evaluteModel = require("../models/evaluate.js");
 
 const firebase = require("../firebase/index.js");
