@@ -6,6 +6,7 @@ const multer = require("multer");
 var apiU = require("../controllers/user.controllers");
 var apiProduct = require("../controllers/product.controller");
 var apiSanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
+var apiRestaurant = require("../controllers/restautant.controller");
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -24,5 +25,8 @@ router.post(
   );
   
 router.post("/product/editProduct/:id", upload.single("image"),apiProduct.editDataProduct);
+
+//restaurant
+router.get("/restaurant/getAll", apiRestaurant.getRestaurants);
 
 module.exports = router;
