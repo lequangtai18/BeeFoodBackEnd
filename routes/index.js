@@ -6,6 +6,7 @@ var product = require("../controllers/product.controller");
 var productModel = require("../models/product.model");
 var sanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
 var comment = require("../controllers/comment.controller");
+// const history = require("../controllers/historyOrderController");
 
 var router = express.Router();
 
@@ -25,11 +26,21 @@ router.get("/addProduct", function (req, res, next) {
 });
 
 router.get("/showProduct", async function (req, res, next) {
-  const data = await product.dataProductRestaurant(req, res);
-  res.render("product/showProduct", {
-    list: data,
-    req: req,
-  });
+  try {
+    const data = await product.dataProductRestaurant(req, res);
+  
+    const format = req.query.format;
+    if (format === 'json') {
+      return res.json(data);
+    } else {
+      return res.render("product/showProduct", {
+        list: data,
+        req: req,
+      });
+    }
+  } catch (error) {
+    next(error); 
+  }
 });
 
 // Lấy sản phẩm để chỉnh sửa
@@ -87,5 +98,7 @@ router.get("/feedback", async function (req, res) {
 
   res.render("feedback/feedback", { req: req, data: info });
 });
+
+router.get("/showrevenue", history.getRevenueRestaurant);
 
 module.exports = router;
