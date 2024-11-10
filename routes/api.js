@@ -189,12 +189,9 @@ router.post(
   apiSanPhamDangDuyet.addProduct
 );
 
-<<<<<<< HEAD
 //restaurant
 router.get("/restaurant/getAll", apiRestaurant.getRestaurants);
 
-=======
 //report
 router.post("/evaluate", apiProduct.postEvaluate);
->>>>>>> 1d60c183094bed43f5dcb0578640d3b8c95f5895
 module.exports = router;

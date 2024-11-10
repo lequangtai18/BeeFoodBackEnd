@@ -2,12 +2,6 @@ var express = require("express");
 const session = require("express-session");
 const { yeu_cau_dang_nhap } = require("../middleware/checklogin");
 var product = require("../controllers/product.controller");
-<<<<<<< HEAD
-var productModel = require("../models/product.model");
-const history = require("../controllers/historyOderControllers");
-var sanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
-var comment = require("../controllers/comment.controller");
-=======
 var comment = require("../controllers/comment.controller");
 const mongoose = require("mongoose");
 var sanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
@@ -15,7 +9,6 @@ var order = require("../controllers/orderControllers");
 const history = require("../controllers/historyOrderController");
 var apiVoucher = require("../controllers/voucher.controller");
 var productModel = require("../models/product.model");
->>>>>>> 1d60c183094bed43f5dcb0578640d3b8c95f5895
 
 var router = express.Router();
 
