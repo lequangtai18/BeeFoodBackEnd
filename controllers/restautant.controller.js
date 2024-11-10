@@ -28,6 +28,22 @@ exports.editProfile = async (req, res, next) => {
   });
   blobWriter.end(req.file.buffer);
 };
+
+exports.getRestaurants = async (req, res, next) => {
+  try {
+    let list = await restaurantModel.restaurantModel.find();
+    if (list) {
+      return res
+        .status(200)
+        .json({ data: list, msg: "Lấy  dữ liệu restaurant thành công" });
+    } else {
+      return res.status(400).json({ msg: "Không có dữ liệu restaurant" });
+    }
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
+};
+
 exports.getInfoRestaurantById = async (req, res, next) => {
   const restaurantId = req.params.id;
 
@@ -39,21 +55,6 @@ exports.getInfoRestaurantById = async (req, res, next) => {
       return res
         .status(200)
         .json({ data: info, msg: "Lấy  dữ liệu restaurant thành công" });
-    } else {
-      return res.status(400).json({ msg: "Không có dữ liệu restaurant" });
-    }
-  } catch (error) {
-    return res.status(500).json({ msg: error.message });
-  }
-};
-
-exports.getRestaurants = async (req, res, next) => {
-  try {
-    let list = await restaurantModel.restaurantModel.find();
-    if (list) {
-      return res
-        .status(200)
-        .json({ data: list, msg: "Lấy  dữ liệu restaurant thành công" });
     } else {
       return res.status(400).json({ msg: "Không có dữ liệu restaurant" });
     }

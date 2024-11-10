@@ -5,8 +5,8 @@ const multer = require("multer");
 
 var apiU = require("../controllers/user.controllers");
 var apiProduct = require("../controllers/product.controller");
-var apiSanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
 var apiRestaurant = require("../controllers/restautant.controller");
+var apiSanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
 
 const upload = multer({ storage: multer.memoryStorage() });
 
