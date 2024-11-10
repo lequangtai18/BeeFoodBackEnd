@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 var userController = require("../models/users.model");
 var voucherModel = require("../models/voucher.model.js");
 var apiVoucher = require("../controllers/voucher.controller");
-// var apiNotify = require("../controllers/notify.controller.js");
+var apiNotify = require("../controllers/notify.controller.js");
 
 const moment = require("moment");
 exports.createOrderSuccess = async (req, res, next) => {
