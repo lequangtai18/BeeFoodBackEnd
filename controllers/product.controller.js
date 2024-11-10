@@ -2,13 +2,12 @@ var productModel = require("../models/product.model");
 var restaurantModel = require("../models/restaurant.model");
 var userModel = require("../models/users.model.js");
 
-// const { History } = require("../models/history.js");
-// const evaluteModel = require("../models/evaluate.js");
-
+const { History } = require("../models/history.js");
 const firebase = require("../firebase/index.js");
 process.env.TZ = "Asia/Ho_Chi_Minh";
 const moment = require("moment-timezone");
 const { error } = require("firebase-functions/logger");
+const evaluteModel = require("../models/evaluate.js");
 const { logger } = require("firebase-functions/v1");
 
 exports.getSuggest = async (req, res, next) => {
@@ -73,7 +72,6 @@ exports.editProduct = async (req, res, next) => {
   });
   return product;
 };
-
 exports.dataProductRestaurant = async (req, res, next) => {
   const id = req.session.user?._id;
   try {
@@ -163,7 +161,7 @@ exports.editDataProduct = async (req, res, next) => {
       discountPrice: Number.parseInt(req.body.discountPrice),
       description: String(req.body.description),
       restaurantId: id,
-      image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
+      image: `https://firebasestorage.googleapis.com/v0/b/datn-de212-15d26.appspot.com/o/${nameFile}?alt=media`,
     };
     productModel.productModel
       .findByIdAndUpdate({ _id: idProduct }, product)
@@ -190,7 +188,7 @@ exports.addProduct = async (req, res, next) => {
       discountPrice: Number.parseInt(req.body.discountPrice),
       description: String(req.body.description),
       restaurantId: id,
-      image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
+      image: `https://firebasestorage.googleapis.com/v0/b/datn-de212-15d26.appspot.com/o/${nameFile}?alt=media`,
     };
     productModel.productModel.create(product).then(() => {
       res.redirect("/showProduct");
