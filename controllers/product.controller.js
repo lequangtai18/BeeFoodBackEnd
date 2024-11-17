@@ -161,7 +161,7 @@ exports.editDataProduct = async (req, res, next) => {
       discountPrice: Number.parseInt(req.body.discountPrice),
       description: String(req.body.description),
       restaurantId: id,
-      image: `https://firebasestorage.googleapis.com/v0/b/datn-de212-15d26.appspot.com/o/${nameFile}?alt=media`,
+      image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
     };
     productModel.productModel
       .findByIdAndUpdate({ _id: idProduct }, product)

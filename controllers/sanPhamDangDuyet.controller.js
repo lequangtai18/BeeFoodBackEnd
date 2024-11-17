@@ -23,7 +23,7 @@ exports.addProduct = async (req, res, next) => {
       description: Number.parseInt(req.body.description),
       description: String(req.body.description),
       restaurantId: id,
-      image: `https://firebasestorage.googleapis.com/v0/b/datn-de212-15d26.appspot.com/o/${nameFile}?alt=media`,
+      image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
     };
     sanPhamDangDuyetModel.sanPhamDangDuyetModel.create(product).then(() => {
       res.redirect("/showProduct");

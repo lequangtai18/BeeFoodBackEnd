@@ -5,30 +5,6 @@ const { render } = require("ejs");
 const firebase = require("../firebase/index.js");
 const productModel = require("../models/product.model.js");
 
-exports.editProfile = async (req, res, next) => {
-  const id = req.session.user?._id;
-  const nameFile = req.file.originalname;
-  const blob = firebase.bucket.file(nameFile);
-  const blobWriter = blob.createWriteStream({
-    metadata: {
-      contentType: req.file.mimetype,
-    },
-  });
-
-  blobWriter.on("finish", () => {
-    const profileRestaurant = {
-      ...req.body,
-      image: `https://firebasestorage.googleapis.com/v0/b/datn-de212-15d26.appspot.com/o/${nameFile}?alt=media`,
-    };
-    restaurantModel.restaurantModel
-      .findByIdAndUpdate({ _id: id }, profileRestaurant)
-      .then(() => {
-        res.redirect("/");
-      });
-  });
-  blobWriter.end(req.file.buffer);
-};
-
 exports.getRestaurants = async (req, res, next) => {
   try {
     let list = await restaurantModel.restaurantModel.find();
@@ -44,6 +20,29 @@ exports.getRestaurants = async (req, res, next) => {
   }
 };
 
+exports.editProfile = async (req, res, next) => {
+  const id = req.session.user?._id;
+  const nameFile = req.file.originalname;
+  const blob = firebase.bucket.file(nameFile);
+  const blobWriter = blob.createWriteStream({
+    metadata: {
+      contentType: req.file.mimetype,
+    },
+  });
+
+  blobWriter.on("finish", () => {
+    const profileRestaurant = {
+      ...req.body,
+      image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
+    };
+    restaurantModel.restaurantModel
+      .findByIdAndUpdate({ _id: id }, profileRestaurant)
+      .then(() => {
+        res.redirect("/");
+      });
+  });
+  blobWriter.end(req.file.buffer);
+};
 exports.getInfoRestaurantById = async (req, res, next) => {
   const restaurantId = req.params.id;
 
@@ -62,7 +61,6 @@ exports.getInfoRestaurantById = async (req, res, next) => {
     return res.status(500).json({ msg: error.message });
   }
 };
-
 exports.createRestaurant = async (req, res, next) => {
   try {
     let list = await restaurantModel.restaurantModel.create(req.body);

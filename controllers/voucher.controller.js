@@ -149,8 +149,7 @@ exports.editVoucher = async (req, res, next) => {
       restaurantId: id,
       quantity: Number.parseInt(req.body.quantity),
       limit: Number.parseInt(req.body.limit),
-
-      image: `https://firebasestorage.googleapis.com/v0/b/datn-de212.appspot.com/o/${nameFile}?alt=media&token=d890e1e7-459c-4ea8-a233-001825f3c1ae`,
+      image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
     };
     voucherModel.voucherModel
       .findByIdAndUpdate({ _id: idVoucher }, voucher)
@@ -179,8 +178,7 @@ exports.addVoucher = async (req, res, next) => {
       restaurantId: id,
       quantity: Number.parseInt(req.body.quantity),
       limit: Number.parseInt(req.body.limit),
-
-      image: `https://firebasestorage.googleapis.com/v0/b/datn-de212.appspot.com/o/${nameFile}?alt=media&token=d890e1e7-459c-4ea8-a233-001825f3c1ae`,
+      image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
     };
     voucherModel.voucherModel.create(voucher).then(() => {
       res.redirect("/listvoucher");
