@@ -115,9 +115,7 @@ router.get("/revenue", function (req, res, next) {
 router.get("/singlemenu", function (req, res, next) {
   res.render("singlemenu/statistics", { title: "Express", req: req });
 });
-router.get("/duyetDon", function (req, res, next) {
-  res.render("singlemenu/duyetDon", { title: "Express", req: req });
-});
+
 router.get("/MyProfile", function (req, res, next) {
   res.render("profile/profile", { title: "Express", req: req });
 });
@@ -127,6 +125,10 @@ router.get("/Favorite", function (req, res, next) {
 router.get("/listproduct", product.getListProduct);
 
 router.get("/adminRevenue", product.getRevenue);
+
+router.get("/duyetDon", function (req, res, next) {
+  res.render("singlemenu/duyetDon", { title: "Express", req: req });
+});
 
 router.get("/showrevenue", history.getRevenueRestaurant);
 router.get("/orderstatistics", order.getOrdersWeb);

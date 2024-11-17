@@ -12,6 +12,7 @@ var apiSlider = require("../controllers/slider.controller");
 var apiComment = require("../controllers/comment.controller");
 var apiRestaurant = require("../controllers/restautant.controller");
 var apiProduct = require("../controllers/product.controller");
+var apiRestaurant = require("../controllers/restautant.controller");
 var apiSanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
 var hisToryModel = require("../models/history");
 var apifavorite = require("../controllers/favoriteController");
@@ -187,6 +188,9 @@ router.post(
   upload.single("image"),
   apiSanPhamDangDuyet.addProduct
 );
+
+//restaurant
+router.get("/restaurant/getAll", apiRestaurant.getRestaurants);
 
 //report
 router.post("/evaluate", apiProduct.postEvaluate);
