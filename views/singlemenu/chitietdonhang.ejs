@@ -1,0 +1,51 @@
+<%- include('../inc/header-user.ejs') %>
+<div style="margin-top: 80px; margin-left: auto; margin-right: auto; text-align: center;">
+  <div>
+    <div style="border: 1px solid #ccc; padding: 20px; max-width: 600px; margin: auto; text-align: center;">
+      
+
+      <%
+        try {
+      %>
+
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h3>Mã Đơn Hàng: <%= data._id %></h3>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <h4>Thông tin Người Mua</h4>
+        <p><strong>Tên người mua:</strong> <%= data.username %></p>
+        <p><strong>Số điện thoại:</strong> <%= data.phone %></p>
+        <p><strong>Địa chỉ:</strong> <%= data.address %></p>
+      </div>
+
+      <div>
+        <h4>Chi tiết Sản Phẩm</h4>
+        <% for (let i = 0; i < data.product.length; i++) { %>
+          <div style="border-bottom: 1px solid #ddd; padding: 10px;">
+            <p><strong>Tên sản phẩm:</strong> <%= data.product[i].name %></p>
+            <p><strong>Số lượng:</strong> <%= data.product[i].quantity %></p>
+            <p><strong>Đơn giá:</strong> <%= data.product[i].price %></p>
+            <p><strong>Thành tiền:</strong> <%= data.product[i].quantity * data.product[i].price %></p>
+          </div>
+          <% console.log("i:", i); %>
+        <% } %>
+      </div>
+
+      <div style="margin-top: 20px; text-align: right;">
+        <p><strong>Tổng cộng:</strong> <%= data.totalPrice %></p>
+      </div>
+      
+
+      <%
+        } catch (error) {
+          console.error(error);
+          // Bạn có thể thực hiện xử lý lỗi ở đây nếu cần
+        }
+      %>
+      
+
+    </div>
+  </div>
+</div>
+<%- include('../inc/footer.ejs') %>
