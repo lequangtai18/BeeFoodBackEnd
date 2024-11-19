@@ -33,6 +33,7 @@ exports.editProfile = async (req, res, next) => {
   blobWriter.on("finish", () => {
     const profileRestaurant = {
       ...req.body,
+      address: req.body.address,
       image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
     };
     restaurantModel.restaurantModel
@@ -43,6 +44,7 @@ exports.editProfile = async (req, res, next) => {
   });
   blobWriter.end(req.file.buffer);
 };
+
 exports.getInfoRestaurantById = async (req, res, next) => {
   const restaurantId = req.params.id;
 
