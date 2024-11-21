@@ -173,6 +173,10 @@ exports.editDataProduct = async (req, res, next) => {
 };
 exports.addProduct = async (req, res, next) => {
   const id = req.session.user?._id;
+
+  if (!req.file) {
+    return res.status(400).send("Không có file được tải lên!");
+  }
   const nameFile = req.file.originalname;
   const blob = firebase.bucket.file(nameFile);
   const blobWriter = blob.createWriteStream({
@@ -181,20 +185,48 @@ exports.addProduct = async (req, res, next) => {
     },
   });
 
+   
+  // Kiểm tra giá trị số
+  const realPrice = Number.parseInt(req.body.realPrice, 10);
+  const discountPrice = Number.parseInt(req.body.discountPrice, 10);
+
+  if (isNaN(realPrice) || isNaN(discountPrice)) {
+    return res.render("addProduct", { error: "Giá trị giá tiền không hợp lệ!" });
+  }
+
+  if (realPrice < 0 || discountPrice < 0) {
+    return res.render("addProduct", { error: "Giá trị không được là số âm!" });
+  }
+
   blobWriter.on("finish", () => {
     const product = {
       ...req.body,
-      realPrice: Number.parseInt(req.body.realPrice),
-      discountPrice: Number.parseInt(req.body.discountPrice),
+      realPrice,
+      discountPrice,
       description: String(req.body.description),
       restaurantId: id,
       image: `https://firebasestorage.googleapis.com/v0/b/datn-de212-15d26.appspot.com/o/${nameFile}?alt=media`,
     };
-    productModel.productModel.create(product).then(() => {
-      res.redirect("/showProduct");
-    });
-  });
-  blobWriter.end(req.file.buffer);
+
+     // Thêm vào cơ sở dữ liệu
+     productModel.productModel
+     .create(product)
+     .then(() => {
+       res.redirect("/showProduct");
+     })
+     .catch((error) => {
+       console.error("Lỗi khi lưu sản phẩm:", error);
+       res.status(500).send("Đã xảy ra lỗi khi thêm sản phẩm.");
+     });
+ });
+
+ blobWriter.on("error", (error) => {
+   console.error("Lỗi khi tải lên file:", error);
+   res.status(500).send("Lỗi khi tải lên file.");
+ });
+
+ blobWriter.end(req.file.buffer);
+  
 };
 
 // web
