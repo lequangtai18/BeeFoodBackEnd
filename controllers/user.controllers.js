@@ -49,10 +49,11 @@ exports.register = async (req, res, next) => {
 };
 exports.update = async (req, res, next) => {
   const userId = req.params.id;
-  const { phone, avatar, gender, birthday } = req.body;
+  const { phone, currentPassword, gender, birthday, password } = req.body;
   console.log(birthday);
   try {
     const user = await userModel.userModel.findById(userId).exec();
+    const salt = await bcrypt.genSalt(10);
 
     if (!user) {
       return res.status(404).json({ error: "Người dùng không tồn tại" });
@@ -61,16 +62,24 @@ exports.update = async (req, res, next) => {
     if (phone) {
       user.phone = phone;
     }
-    if (avatar) {
-      user.avatar = avatar;
+    if (currentPassword) {
+      const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isPasswordMatch) {
+        return res.status(400).json({ error: "Mật khẩu cũ không chính xác." });
+      }
     }
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+   
     if (gender) {
       user.gender = gender;
     }
     if (birthday) {
       user.birthday = birthday;
     }
-
+     user.password = await bcrypt.hash(req.body.password, salt);
     const updatedUser = await user.save();
 
     res.status(200).json(updatedUser);
