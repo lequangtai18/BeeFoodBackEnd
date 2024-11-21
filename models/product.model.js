@@ -6,7 +6,11 @@ const productSchema = new mongoose.Schema(
     name: String,
     image: String,
     description: String,
-    realPrice: Number,
+    realPrice: {
+      type: Number,
+      required: true,
+      min: 0 // Giá trị tối thiểu là 0
+    },
     category: String,
     isHide: { type: Boolean, default: false },
     likeCount: {

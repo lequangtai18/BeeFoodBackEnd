@@ -14,6 +14,7 @@ const restaurantSchema = new mongoose.Schema(
     address: String,
     timeon: String,
     timeoff: String,
+    address: String,
     email: String,
     phone: String,
     totalEvaluate: { type: Number, default: 0 },
