@@ -50,46 +50,53 @@ exports.register = async (req, res, next) => {
 exports.update = async (req, res, next) => {
   const userId = req.params.id;
   const { phone, currentPassword, gender, birthday, password } = req.body;
-  console.log(birthday);
+
   try {
+    // Tìm người dùng theo ID
     const user = await userModel.userModel.findById(userId).exec();
-    const salt = await bcrypt.genSalt(10);
 
     if (!user) {
       return res.status(404).json({ error: "Người dùng không tồn tại" });
     }
 
+    // Cập nhật số điện thoại nếu có
     if (phone) {
       user.phone = phone;
     }
-    if (currentPassword) {
+
+    // Kiểm tra mật khẩu cũ nếu có mật khẩu mới
+    if (password && currentPassword) {
       const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
       if (!isPasswordMatch) {
         return res.status(400).json({ error: "Mật khẩu cũ không chính xác." });
       }
-    }
-    if (password) {
+
+      // Cập nhật mật khẩu mới
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
     }
-   
+
+    // Cập nhật giới tính nếu có
     if (gender) {
       user.gender = gender;
     }
+
+    // Cập nhật ngày sinh nếu có
     if (birthday) {
       user.birthday = birthday;
     }
-     user.password = await bcrypt.hash(req.body.password, salt);
+
+    // Lưu lại thông tin người dùng đã cập nhật
     const updatedUser = await user.save();
 
+    // Trả về thông tin người dùng đã cập nhật
     res.status(200).json(updatedUser);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({ error: "Lỗi khi cập nhật thông tin người dùng" });
+    return res.status(400).json({ error: "Lỗi khi cập nhật thông tin người dùng" });
   }
 };
+
 
 exports.login = async (req, res, next) => {
   console.log(req.body);
