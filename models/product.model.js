@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema(
     realPrice: {
       type: Number,
       required: true,
-      min: 0 // Giá trị tối thiểu là 0
+      min: 0
     },
     category: String,
     isHide: { type: Boolean, default: false },
