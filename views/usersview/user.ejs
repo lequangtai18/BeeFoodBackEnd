@@ -1,0 +1,115 @@
+<%- include('../inc/header-admin.ejs') %>
+<!-- Viết code màn hình tại đây -->
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Danh sách người dùng</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Danh sách người dùng</li>
+      </ol>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Username</th>
+            <th scope="col">Role</th>
+            <th scope="col">Phone</th>
+            <th scope="col" style="text-align: right;">Đơn đã mua</th>
+            <th scope="col" data-sort-type="number" style="text-align: right;" data-sort-order="asc">Doanh thu ↑↓</th>
+            <th scope="col" style="text-align: right;">Tạo tài khoản</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% list.forEach(user => { %>
+            <tr>
+              <td>
+                <a href="/user/profile/<%= user._id %>">
+                  <%= user.username %>
+                </a>
+              </td>
+              <td><%= user.role %></td>
+              <td><%= user.phone %></td>
+              <td style="text-align: right;"><%= user.count %></td>
+              <td style="text-align: right;"><%= user.totalAmount %></td>
+              <td style="text-align: right;"><%= user.timeSinceCreated %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+    <!-- End Page Title -->
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const table = document.querySelector('.table');
+      const headers = table.querySelectorAll('th');
+
+      headers.forEach(header => {
+        header.addEventListener('click', () => {
+          const sortType = header.getAttribute('data-sort-type');
+          const sortOrder = header.getAttribute('data-sort-order');
+
+          // Xử lý sắp xếp ở đây
+          sortTable(table, sortType, sortOrder);
+
+          // Đảo ngược thứ tự sắp xếp và cập nhật thuộc tính data-sort-order
+          header.setAttribute('data-sort-order', sortOrder === 'asc' ? 'desc' : 'asc');
+        });
+      });
+    });
+
+    function sortTable(table, type, order) {
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+
+      rows.sort((a, b) => {
+        const aValue = getDataValue(a, type);
+        const bValue = getDataValue(b, type);
+
+        if (order === 'asc') {
+          return aValue - bValue;
+        } else {
+          return bValue - aValue;
+        }
+      });
+
+      tbody.innerHTML = '';
+      rows.forEach(row => tbody.appendChild(row));
+    }
+
+    function getDataValue(row, type) {
+      // Lấy giá trị từ cột thứ index tương ứng với loại dữ liệu
+      const index = {
+  'number': 3, // Đơn đã mua
+  'number': 4,   // Doanh thu
+}[type];
+
+      const cell = row.cells[index];
+
+      // Kiểm tra xem cell có tồn tại không
+      if (!cell) {
+        return 0;
+      }
+
+      // Lấy giá trị textContent từ cell (hoặc giá trị mặc định là '')
+      const value = cell.textContent ? cell.textContent.trim() : '';
+
+      console.log('Original Cell Value:', value);
+
+      // Kiểm tra xem giá trị có tồn tại không
+      if (!value) {
+        return 0;
+      }
+
+      switch (type) {
+        case 'number':
+          return parseFloat(value) || 0;
+        case 'date':
+          return new Date(value).getTime() || 0;
+        default:
+          return value.toLowerCase();
+      }
+    }
+  </script>
+
+<%- include('../inc/footer.ejs') %>
