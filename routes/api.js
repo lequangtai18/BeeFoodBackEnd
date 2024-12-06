@@ -194,4 +194,7 @@ router.get("/restaurant/getAll", apiRestaurant.getRestaurants);
 
 //report
 router.post("/evaluate", apiProduct.postEvaluate);
+
+// Thêm dòng này:
+router.post("/users/reset-password", apiU.resetPassword);
 module.exports = router;

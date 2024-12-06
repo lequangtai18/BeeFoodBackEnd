@@ -2,7 +2,7 @@ const admin = require("firebase-admin");
 
 // Initialize firebase admin SDK
 
-const serviceAccount = require("../beefoodconsole-firebase-adminsdk-xv6qz-b54ef9e4d5.json");
+const serviceAccount = require("../beefoodconsole-firebase-adminsdk-xv6qz-75951e7233.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   storageBucket: "beefoodconsole.appspot.com",
