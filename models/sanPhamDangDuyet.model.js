@@ -6,7 +6,11 @@ const productSchema = new mongoose.Schema(
     name: String,
     image: String,
     description: String,
-    realPrice: Number,
+    realPrice: {
+      type: Number,
+      required: true,
+      min: 0 // Giá trị tối thiểu là 0
+    },
     category: String,
     trangthai: { type: Number, default: 0 },
     restaurantId: { type: mongoose.Schema.ObjectId, ref: "restaurantModel" },

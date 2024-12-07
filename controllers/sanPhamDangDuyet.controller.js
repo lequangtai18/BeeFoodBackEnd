@@ -16,6 +16,14 @@ exports.addProduct = async (req, res, next) => {
   });
 
   blobWriter.on("finish", () => {
+    const realPrice = Number.parseInt(req.body.realPrice);
+    const discountPrice = Number.parseInt(req.body.discountPrice);
+
+    // Kiểm tra giá tiền không âm
+    if (realPrice < 0 || discountPrice < 0) {
+      return res.status(400).json({ msg: "Giá tiền phải lớn hơn hoặc bằng 0" });
+    }
+
     const product = {
       ...req.body,
       realPrice: Number.parseInt(req.body.realPrice),

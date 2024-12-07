@@ -142,3 +142,28 @@ exports.infoUser = async (req, res, next) => {
     return res.status(404).json({ msg: error.message });
   }
 };
+
+// Thêm hàm resetPassword
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { username, phone } = req.body;
+
+    if (!username || !phone) {
+      return res.status(400).json({ error: 'Vui lòng nhập tên đăng nhập và số điện thoại' });
+    }
+
+    const user = await userModel.userModel.findOne({ username: username, phone: phone });
+    if (!user) {
+      return res.status(404).json({ error: 'Không tìm thấy tài khoản với thông tin này.' });
+    }
+
+    const hashedPassword = await bcrypt.hash('1', 10); // Mật khẩu mới "1"
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ message: 'Đặt lại mật khẩu thành công. Mật khẩu mới là "1".' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Đã xảy ra lỗi trong quá trình xử lý.' });
+  }
+};
