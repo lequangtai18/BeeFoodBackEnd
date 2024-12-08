@@ -78,9 +78,20 @@
   }
 
   function isValidStatusChange(currentStatus, newStatus) {
-    // Đảm bảo rằng trạng thái mới lớn hơn hoặc bằng trạng thái hiện tại
-    return parseInt(newStatus) >= parseInt(currentStatus);
+    currentStatus = parseInt(currentStatus);
+    newStatus = parseInt(newStatus);
+
+    // Kiểm tra nếu cố gắng chuyển trạng thái thành "Đã giao" (3) trước khi xác nhận (1)
+    if (newStatus === 2 && currentStatus < 1) {
+      return false;
   }
+    if (newStatus === 3 && currentStatus < 1) {
+        return false;
+    }
+
+    // Đảm bảo trạng thái mới không nhỏ hơn trạng thái hiện tại
+    return newStatus >= currentStatus;
+}
 
   function getOrderStatusText(status) {
     switch (parseInt(status)) {
