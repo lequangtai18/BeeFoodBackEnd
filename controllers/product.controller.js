@@ -9,6 +9,7 @@ const moment = require("moment-timezone");
 const { error } = require("firebase-functions/logger");
 const evaluteModel = require("../models/evaluate.js");
 const { logger } = require("firebase-functions/v1");
+const timestamp = moment().tz("Asia/Ho_Chi_Minh").toISOString();
 
 exports.getSuggest = async (req, res, next) => {
   try {
@@ -206,6 +207,7 @@ exports.addProduct = async (req, res, next) => {
       description: String(req.body.description),
       restaurantId: id,
       image: `https://firebasestorage.googleapis.com/v0/b/datn-de212-15d26.appspot.com/o/${nameFile}?alt=media`,
+      createdAt: timestamp,
     };
 
      // Thêm vào cơ sở dữ liệu
