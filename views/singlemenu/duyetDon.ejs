@@ -128,6 +128,18 @@
   function displayOrders(orders) {
     const tableBody = document.getElementById("orderTableBody");
 
+     // Sắp xếp đơn hàng theo ngày tạo (createdAt), mới nhất lên đầu
+     orders.sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+          return new Date(b.createdAt) - new Date(a.createdAt); // Nếu có trường createdAt
+      } else {
+          return parseInt(b._id.substring(0, 8), 16) - parseInt(a._id.substring(0, 8), 16); // Nếu không, sắp xếp theo _id
+      }
+  });
+
+  // Lọc và hiển thị các đơn hàng không có trạng thái "Đã giao" (3) và "Đã hủy" (4)
+  tableBody.innerHTML = ""; // Xóa nội dung cũ trong bảng
+
     orders
       .filter((order) => order.status !== 3 && order.status !== 4)
       .forEach((order) => {
