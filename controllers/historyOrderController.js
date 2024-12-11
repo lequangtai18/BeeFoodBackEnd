@@ -503,12 +503,14 @@ exports.getRevenueByDateRange = async (req, res) => {
     const user = req.session.user;
     const restaurantId = user._id;
 
-    // Lấy các hóa đơn trong khoảng thời gian
+    // Lọc hóa đơn
     const orders = await historyModel.History.find({
       time: { $gte: new Date(startDate), $lte: new Date(endDate) },
-      status: 3, // Chỉ lấy các đơn đã hoàn thành
+      status: 3,
       "products.restaurantId": restaurantId,
     });
+
+    console.log("Orders fetched:", orders);
 
     // Tính tổng doanh thu
     const totalRevenue = orders.reduce(
@@ -516,32 +518,36 @@ exports.getRevenueByDateRange = async (req, res) => {
       0
     );
 
+    console.log("Total revenue calculated:", totalRevenue);
+
     // Chuẩn bị dữ liệu cho biểu đồ
-    const categories = []; // Trục X: ngày hoặc thời gian
-    const revenues = []; // Trục Y: doanh thu
-    const sales = []; // Số lượng bán hàng
+    const categories = [];
+    const revenues = [];
+    const sales = [];
 
     orders.forEach((order) => {
-      const date = new Date(order.time).toLocaleDateString("vi-VN"); // Lấy ngày theo định dạng dd/MM/yyyy
+      const date = new Date(order.time).toLocaleDateString("vi-VN"); // Ngày theo định dạng dd/MM/yyyy
       const index = categories.indexOf(date);
 
       if (index === -1) {
-        // Nếu ngày chưa tồn tại, thêm mới
         categories.push(date);
         revenues.push(order.toltalprice || 0);
-        sales.push(1); // Bắt đầu với 1 đơn hàng
+        sales.push(1);
       } else {
-        // Nếu ngày đã tồn tại, cộng dồn doanh thu
         revenues[index] += order.toltalprice || 0;
-        sales[index] += 1; // Tăng số lượng bán hàng
+        sales[index] += 1;
       }
     });
+
+    console.log("Categories:", categories);
+    console.log("Revenues:", revenues);
+    console.log("Sales:", sales);
 
     res.status(200).json({
       orders,
       totalRevenue,
-      categories, // Danh sách ngày (hoặc thời gian) cho trục X
-      revenues, // Doanh thu tương ứng cho trục Y
+      categories,
+      revenues,
       sales,
     });
   } catch (error) {
@@ -549,3 +555,71 @@ exports.getRevenueByDateRange = async (req, res) => {
     res.status(500).json({ msg: "Lỗi máy chủ nội bộ." });
   }
 };
+
+exports.getRevenueByBranch = async (req, res) => {
+  try {
+    const { restaurantId, startDate, endDate } = req.body;
+
+    // Kiểm tra đầu vào
+    if (!restaurantId || !startDate || !endDate) {
+      return res.status(400).json({ msg: "Thiếu dữ liệu đầu vào: restaurantId, startDate, hoặc endDate." });
+    }
+
+    console.log("Input Data:", { restaurantId, startDate, endDate });
+
+    // Lấy dữ liệu đơn hàng theo khoảng thời gian và nhà hàng
+    const orders = await historyModel.History.find({
+      time: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      status: 3, // Đơn hàng đã hoàn thành
+      "products.restaurantId": restaurantId,
+    });
+
+    console.log("Fetched Orders:", orders);
+
+    // Tính tổng doanh thu
+    const totalRevenue = orders.reduce(
+      (total, order) => total + (order.toltalprice || 0),
+      0
+    );
+
+    console.log("Total Revenue:", totalRevenue);
+
+    // Chuẩn bị dữ liệu cho biểu đồ
+    const dailyData = {};
+
+    orders.forEach((order) => {
+      const date = new Date(order.time).toLocaleDateString("vi-VN");
+
+      if (!dailyData[date]) {
+        dailyData[date] = {
+          revenue: order.toltalprice || 0,
+          sales: 1,
+        };
+      } else {
+        dailyData[date].revenue += order.toltalprice || 0;
+        dailyData[date].sales += 1;
+      }
+    });
+
+    // Chuyển đổi dữ liệu thành danh sách để vẽ biểu đồ
+    const categories = Object.keys(dailyData);
+    const revenues = categories.map((date) => dailyData[date].revenue);
+    const sales = categories.map((date) => dailyData[date].sales);
+
+    console.log("Categories:", categories);
+    console.log("Revenues:", revenues);
+    console.log("Sales:", sales);
+
+    // Trả về dữ liệu
+    res.status(200).json({
+      totalRevenue,
+      categories,
+      revenues,
+      sales,
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy thống kê chi nhánh:", error);
+    res.status(500).json({ msg: "Lỗi máy chủ nội bộ." });
+  }
+};
+

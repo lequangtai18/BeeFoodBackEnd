@@ -1,5 +1,7 @@
 const { default: mongoose } = require("mongoose");
-var restaurantModel = require("../models/restaurant.model");
+const { restaurantModel } = require("../models/restaurant.model");
+
+
 const bcrypt = require("bcrypt");
 const { render } = require("ejs");
 const firebase = require("../firebase/index.js");
@@ -319,5 +321,86 @@ exports.getProfile = async (req, res, next) => {
     res
       .status(500)
       .json({ message: "Đã xảy ra lỗi khi lấy thông tin nhà hàng" });
+  }
+};
+
+
+exports.getRevenueByBranch = async (req, res) => {
+  try {
+    const { restaurantId, startDate, endDate } = req.body;
+
+    // Kiểm tra đầu vào
+    if (!restaurantId || !startDate || !endDate) {
+      return res.status(400).json({ msg: "Thiếu dữ liệu đầu vào: restaurantId, startDate, hoặc endDate." });
+    }
+
+    console.log("Input Data:", { restaurantId, startDate, endDate });
+
+    // Lấy dữ liệu đơn hàng theo khoảng thời gian và nhà hàng
+    const orders = await historyModel.History.find({
+      time: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      status: 3, // Đơn hàng đã hoàn thành
+      "products.restaurantId": restaurantId,
+    });
+
+    console.log("Fetched Orders:", orders);
+
+    // Tính tổng doanh thu
+    const totalRevenue = orders.reduce(
+      (total, order) => total + (order.toltalprice || 0),
+      0
+    );
+
+    console.log("Total Revenue:", totalRevenue);
+
+    // Chuẩn bị dữ liệu cho biểu đồ
+    const dailyData = {};
+
+    orders.forEach((order) => {
+      const date = new Date(order.time).toLocaleDateString("vi-VN");
+
+      if (!dailyData[date]) {
+        dailyData[date] = {
+          revenue: order.toltalprice || 0,
+          sales: 1,
+        };
+      } else {
+        dailyData[date].revenue += order.toltalprice || 0;
+        dailyData[date].sales += 1;
+      }
+    });
+
+    // Chuyển đổi dữ liệu thành danh sách để vẽ biểu đồ
+    const categories = Object.keys(dailyData);
+    const revenues = categories.map((date) => dailyData[date].revenue);
+    const sales = categories.map((date) => dailyData[date].sales);
+
+    console.log("Categories:", categories);
+    console.log("Revenues:", revenues);
+    console.log("Sales:", sales);
+
+    // Trả về dữ liệu
+    res.status(200).json({
+      totalRevenue,
+      categories,
+      revenues,
+      sales,
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy thống kê chi nhánh:", error);
+    res.status(500).json({ msg: "Lỗi máy chủ nội bộ." });
+  }
+};
+
+
+
+exports.getBranches = async (req, res) => {
+  try {
+    console.log("Restaurant Model:", restaurantModel); // Kiểm tra model
+    const branches = await restaurantModel.find({}, "_id name");
+    res.status(200).json(branches);
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách chi nhánh:", error);
+    res.status(500).json({ msg: "Lỗi máy chủ nội bộ." });
   }
 };

@@ -206,4 +206,8 @@ router.post('/users/unlock/:id', apiU.unlockUser);
 
 router.post("/revenue/date-range", apiHistory.getRevenueByDateRange);
 
+
+router.get("/admin/get-branches", apiRestaurant.getBranches);
+router.post("/admin/revenue-by-branch", apiHistory.getRevenueByBranch);
+
 module.exports = router;
