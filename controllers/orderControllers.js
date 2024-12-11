@@ -1,5 +1,7 @@
 const { Order } = require("../models/orders");
 const { productModel } = require("../models/product.model");
+const moment = require("moment-timezone");
+
 exports.getOrders = async (req, res) => {
   try {
     const orders = await Order.find();
@@ -48,6 +50,8 @@ exports.createOrder = async (req, res) => {
     const orders = await Order.find({ userId: req.body.userId });
     console.log("order filter", orders);
 
+    const orderDate = moment().tz("Asia/Ho_Chi_Minh").toDate(); // Adjust the timezone here
+
     if (orders.length === 0) {
       const order = new Order({
         userId: req.body.userId,
@@ -58,7 +62,7 @@ exports.createOrder = async (req, res) => {
         restaurantId: req.body.restaurantId,
         price: product.realPrice,
         quantity: req.body.quantity,
-        orderDate: new Date(),
+        orderDate: orderDate,
       });
       const newOrder = await order.save();
       return res.json(newOrder);
@@ -85,14 +89,14 @@ exports.createOrder = async (req, res) => {
             restaurantId: req.body.restaurantId,
             price: product.realPrice,
             quantity: req.body.quantity,
-            orderDate: new Date(),
+            orderDate: orderDate,
           });
           const newOrder = await order.save();
           return res.json(newOrder);
         }
       } else {
         return res.status(404).json({
-          msg: "đang thêm sản phẩm không cùng 1 cửa hàng vào giỏ hàng",
+          msg: "Đang thêm sản phẩm không cùng 1 cửa hàng vào giỏ hàng",
         });
       }
     }
