@@ -197,4 +197,9 @@ router.post("/evaluate", apiProduct.postEvaluate);
 
 // Thêm dòng này:
 router.post("/users/reset-password", apiU.resetPassword);
+// Khóa tài khoản
+router.post("/users/lock/:id", apiU.lockUser);
+
+// Mở khóa tài khoản
+router.post('/users/unlock/:id', apiU.unlockUser);
 module.exports = router;

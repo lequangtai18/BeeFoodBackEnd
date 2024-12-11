@@ -15,6 +15,7 @@ const userSchema = new db.mongoose.Schema(
     gender: { type: String, required: false, default: null },
     phone: { type: String, required: false, default: null },
     token: { type: String, required: false },
+    isLocked: { type: Boolean, default: false },
   },
   {
     collection: "users",

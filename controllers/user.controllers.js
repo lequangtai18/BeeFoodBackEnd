@@ -114,6 +114,10 @@ exports.login = async (req, res, next) => {
         req.body.password,
         user.password
       );
+      // Kiểm tra xem tài khoản có bị khóa hay không
+      if (user.isLocked) {
+        return res.status(403).json({ msg: "Tài khoản của bạn đã bị khóa" });
+      }
       if (!isPasswordMatch) {
         console.log("sai mật khẩu");
         return res.status(401).json({ msg: "sai mật khẩu" });
@@ -165,5 +169,38 @@ exports.resetPassword = async (req, res, next) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Đã xảy ra lỗi trong quá trình xử lý.' });
+  }
+};
+
+exports.lockUser = async (req, res) => {
+  console.log('Locking user with ID:', req.params.id); // Log ID
+  try {
+    const userId = req.params.id;
+    const user = await userModel.userModel.findById(userId);
+
+    if (!user) return res.status(404).json({ success: false, message: 'Người dùng không tồn tại!' });
+
+    user.isLocked = true;
+    await user.save();
+
+    res.json({ success: true, message: 'Tài khoản đã bị khóa!' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server!' });
+  }
+};
+
+exports.unlockUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await userModel.userModel.findById(userId);
+
+    if (!user) return res.status(404).json({ success: false, message: 'Người dùng không tồn tại!' });
+
+    user.isLocked = false;
+    await user.save();
+
+    res.json({ success: true, message: 'Tài khoản đã được mở khóa!' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server!' });
   }
 };
