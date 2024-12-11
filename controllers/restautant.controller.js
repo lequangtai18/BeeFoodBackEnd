@@ -21,29 +21,65 @@ exports.getRestaurants = async (req, res, next) => {
 };
 
 exports.editProfile = async (req, res, next) => {
-  const id = req.session.user?._id;
-  const nameFile = req.file.originalname;
-  const blob = firebase.bucket.file(nameFile);
-  const blobWriter = blob.createWriteStream({
-    metadata: {
-      contentType: req.file.mimetype,
-    },
-  });
+  try {
+    const id = req.session.user?._id; // ID của người dùng từ session
+    if (!id) {
+      return res.status(401).json({ message: "Người dùng chưa đăng nhập" });
+    }
 
-  blobWriter.on("finish", () => {
-    const profileRestaurant = {
-      ...req.body,
-      address: req.body.address,
-      image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
-    };
-    restaurantModel.restaurantModel
-      .findByIdAndUpdate({ _id: id }, profileRestaurant)
-      .then(() => {
-        res.redirect("/");
+    const nameFile = req.file?.originalname; // Lấy tên file từ request (nếu có file)
+    let imageUrl;
+
+    // Nếu có file, upload file lên Firebase Storage
+    if (nameFile) {
+      const blob = firebase.bucket.file(nameFile);
+      const blobWriter = blob.createWriteStream({
+        metadata: {
+          contentType: req.file.mimetype,
+        },
       });
-  });
-  blobWriter.end(req.file.buffer);
+
+      await new Promise((resolve, reject) => {
+        blobWriter.on("finish", resolve);
+        blobWriter.on("error", reject);
+        blobWriter.end(req.file.buffer);
+      });
+
+      imageUrl = `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`;
+    }
+
+    // Chuẩn bị dữ liệu cập nhật
+    const profileRestaurant = {
+      name: req.body.name, // Cập nhật tên nhà hàng
+      address: req.body.address, // Cập nhật địa chỉ
+      timeon: req.body.timeon, // Thời gian mở
+      timeoff: req.body.timeoff, // Thời gian đóng
+    };
+
+    // Nếu có file ảnh, thêm URL ảnh vào dữ liệu
+    if (imageUrl) {
+      profileRestaurant.image = imageUrl;
+    }
+
+    // Cập nhật thông tin trong cơ sở dữ liệu
+    const updatedRestaurant = await restaurantModel.restaurantModel.findByIdAndUpdate(
+      { _id: id },
+      profileRestaurant,
+      { new: true } // Trả về tài liệu đã cập nhật
+    );
+
+    if (!updatedRestaurant) {
+      return res.status(404).json({ message: "Nhà hàng không tồn tại" });
+    }
+
+    // Chuyển hướng sau khi cập nhật thành công
+    res.redirect("/");
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return res.status(500).json({ message: "Lỗi server", error: error.message });
+  }
 };
+
 
 exports.getInfoRestaurantById = async (req, res, next) => {
   const restaurantId = req.params.id;
@@ -257,7 +293,7 @@ exports.searchRestaurant = async (req, res, next) => {
   }
 };
 
-exports.searchProductOnListProduct = async (req, res, next) => {};
+exports.searchProductOnListProduct = async (req, res, next) => { };
 
 exports.getProfile = async (req, res, next) => {
   try {
