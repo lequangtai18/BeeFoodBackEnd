@@ -202,4 +202,8 @@ router.post("/users/lock/:id", apiU.lockUser);
 
 // Mở khóa tài khoản
 router.post('/users/unlock/:id', apiU.unlockUser);
+
+
+router.post("/revenue/date-range", apiHistory.getRevenueByDateRange);
+
 module.exports = router;
