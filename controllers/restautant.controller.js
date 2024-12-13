@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const { restaurantModel } = require("../models/restaurant.model");
+var restaurantModel = require("../models/restaurant.model");
 
 
 const bcrypt = require("bcrypt");

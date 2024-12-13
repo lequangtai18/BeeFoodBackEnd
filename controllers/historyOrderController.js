@@ -490,6 +490,13 @@ function organizeDataByMonth(bills) {
   return { categories, data, revenue };
 }
 
+// Hàm để thêm ngày vào một ngày cụ thể
+const addDays = (date, days) => {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+};
+
 exports.getRevenueByDateRange = async (req, res) => {
   try {
     const { startDate, endDate } = req.body;
@@ -501,16 +508,27 @@ exports.getRevenueByDateRange = async (req, res) => {
     }
 
     const user = req.session.user;
+    if (!user || !user._id) {
+      return res.status(401).json({ msg: "Người dùng chưa được xác thực." });
+    }
+
     const restaurantId = user._id;
+
+    // Chuyển đổi startDate và endDate thành đối tượng Date
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Tạo ngày tiếp theo của endDate
+    const endNextDay = addDays(end, 1);
 
     // Lọc hóa đơn
     const orders = await historyModel.History.find({
-      time: { $gte: new Date(startDate), $lte: new Date(endDate) },
+      time: { $gte: start, $lt: endNextDay },
       status: 3,
       "products.restaurantId": restaurantId,
     });
 
-    console.log("Orders fetched:", orders);
+    console.log("Orders fetched:", JSON.stringify(orders, null, 2));
 
     // Tính tổng doanh thu
     const totalRevenue = orders.reduce(
@@ -526,15 +544,19 @@ exports.getRevenueByDateRange = async (req, res) => {
     const sales = [];
 
     orders.forEach((order) => {
-      const date = new Date(order.time).toLocaleDateString("vi-VN"); // Ngày theo định dạng dd/MM/yyyy
+      const date = new Date(order.time).toLocaleDateString("vi-VN", {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
       const index = categories.indexOf(date);
 
       if (index === -1) {
         categories.push(date);
-        revenues.push(order.toltalprice || 0);
+        revenues.push(order.totalPrice || 0);
         sales.push(1);
       } else {
-        revenues[index] += order.toltalprice || 0;
+        revenues[index] += order.totalPrice || 0;
         sales[index] += 1;
       }
     });
@@ -556,6 +578,8 @@ exports.getRevenueByDateRange = async (req, res) => {
   }
 };
 
+
+
 exports.getRevenueByBranch = async (req, res) => {
   try {
     const { restaurantId, startDate, endDate } = req.body;
@@ -567,10 +591,16 @@ exports.getRevenueByBranch = async (req, res) => {
 
     console.log("Input Data:", { restaurantId, startDate, endDate });
 
-    // Lấy dữ liệu đơn hàng theo khoảng thời gian và nhà hàng
+    // Chuyển đổi startDate và endDate thành đối tượng Date
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    // Tạo ngày tiếp theo của endDate
+    const endNextDay = addDays(end, 1);
+    // Lọc hóa đơn
     const orders = await historyModel.History.find({
-      time: { $gte: new Date(startDate), $lte: new Date(endDate) },
-      status: 3, // Đơn hàng đã hoàn thành
+      time: { $gte: start, $lt: endNextDay },
+      status: 3,
       "products.restaurantId": restaurantId,
     });
 

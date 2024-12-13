@@ -17,6 +17,7 @@ var apiSanPhamDangDuyet = require("../controllers/sanPhamDangDuyet.controller");
 var hisToryModel = require("../models/history");
 var apifavorite = require("../controllers/favoriteController");
 var apiNotify = require("../controllers/notify.controller");
+var apishowapishow = require("../controllers/shownh");
 
 const upload = multer({ storage: multer.memoryStorage() });
 //notify
@@ -207,7 +208,7 @@ router.post('/users/unlock/:id', apiU.unlockUser);
 router.post("/revenue/date-range", apiHistory.getRevenueByDateRange);
 
 
-router.get("/admin/get-branches", apiRestaurant.getBranches);
+router.get("/admin/get-branches", apishowapishow.getBranches);
 router.post("/admin/revenue-by-branch", apiHistory.getRevenueByBranch);
 
 module.exports = router;
