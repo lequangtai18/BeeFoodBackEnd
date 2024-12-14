@@ -395,10 +395,16 @@
 
           // Thêm các chi nhánh vào dropdown
           data.forEach((branch) => {
-            const option = document.createElement("option");
-            option.value = branch._id;
-            option.text = branch.name;
-            branchSelect.appendChild(option);
+            if (branch.name !== 'Admin') {
+              const option = document.createElement("option");
+              option.value = branch._id;
+              option.text = branch.name;
+              branchSelect.appendChild(option);
+            }
+            // const option = document.createElement("option");
+            // option.value = branch._id;
+            // option.text = branch.name;
+            // branchSelect.appendChild(option);
           });
         } catch (error) {
           console.error("Lỗi khi tải danh sách chi nhánh:", error);
