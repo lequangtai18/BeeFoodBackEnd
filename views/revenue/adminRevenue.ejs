@@ -21,6 +21,7 @@
                 <div class="col-md-6">
                   <label for="branchSelect">Chi Nhánh:</label>
                   <select id="branchSelect" class="form-control">
+                    <option value="all">Tất cả chi nhánh</option>
                     <!-- Dữ liệu các chi nhánh sẽ được tải động -->
                   </select>
                 </div>
@@ -441,6 +442,44 @@
         }
       }
 
+
+      // Hàm lấy dữ liệu doanh thu cho tất cả các chi nhánh
+      async function fetchAllBranchesRevenue(startDate, endDate) {
+        try {
+          const response = await fetch("/api/admin/revenue-all-branches", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              startDate,
+              endDate,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Lỗi khi gọi API lấy dữ liệu doanh thu cho tất cả chi nhánh");
+          }
+
+          const data = await response.json();
+
+          if (
+            !data ||
+            !Array.isArray(data.categories) ||
+            !Array.isArray(data.sales) ||
+            !Array.isArray(data.revenues)
+          ) {
+            throw new Error("Dữ liệu trả về không hợp lệ");
+          }
+
+          return data;
+        } catch (error) {
+          console.error("Lỗi khi lấy dữ liệu doanh thu cho tất cả chi nhánh:", error);
+          return null;
+        }
+      }
+
+
       // Hàm xử lý khi submit form
       branchForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -454,7 +493,13 @@
           return;
         }
 
-        const data = await fetchBranchRevenue(restaurantId, startDate, endDate);
+        let data;
+        if (restaurantId === 'all') {
+          data = await fetchAllBranchesRevenue(startDate, endDate);
+        } else {
+          data = await fetchBranchRevenue(restaurantId, startDate, endDate);
+        }
+
 
         if (!data) {
           alert("Không thể tải dữ liệu.");

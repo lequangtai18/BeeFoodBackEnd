@@ -211,4 +211,7 @@ router.post("/revenue/date-range", apiHistory.getRevenueByDateRange);
 router.get("/admin/get-branches", apishowapishow.getBranches);
 router.post("/admin/revenue-by-branch", apiHistory.getRevenueByBranch);
 
+router.post('/admin/revenue-all-branches', apiHistory.getTotalRevenueByDateRange);
+
+
 module.exports = router;

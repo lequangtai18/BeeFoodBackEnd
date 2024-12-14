@@ -653,3 +653,68 @@ exports.getRevenueByBranch = async (req, res) => {
   }
 };
 
+
+
+
+// Thêm hàm này vào historyOrderController.js
+
+exports.getTotalRevenueByDateRange = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ msg: "Cần cung cấp ngày bắt đầu và ngày kết thúc." });
+    }
+
+    // Chuyển đổi startDate và endDate thành đối tượng Date
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const endNextDay = addDays(end, 1);
+
+    // Tìm tất cả các đơn hàng hoàn thành trong khoảng thời gian
+    const orders = await historyModel.History.find({
+      time: { $gte: start, $lt: endNextDay },
+      status: 3, // Giả sử status 3 là hoàn thành
+    });
+
+    // Tính tổng doanh thu
+    const totalRevenue = orders.reduce(
+      (total, order) => total + (order.toltalprice || 0),
+      0
+    );
+
+    // Chuẩn bị dữ liệu cho biểu đồ
+    const categories = [];
+    const revenues = [];
+    const sales = [];
+
+    orders.forEach((order) => {
+      const date = new Date(order.time).toLocaleDateString("vi-VN", {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+      const index = categories.indexOf(date);
+
+      if (index === -1) {
+        categories.push(date);
+        revenues.push(order.toltalprice || 0);
+        sales.push(1);
+      } else {
+        revenues[index] += order.toltalprice || 0;
+        sales[index] += 1;
+      }
+    });
+
+    res.status(200).json({
+      orders,
+      totalRevenue,
+      categories,
+      revenues,
+      sales,
+    });
+  } catch (error) {
+    console.error("Lỗi khi lọc doanh thu cho tất cả chi nhánh:", error);
+    res.status(500).json({ msg: "Lỗi máy chủ nội bộ." });
+  }
+};
