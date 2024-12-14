@@ -36,7 +36,10 @@
           </tr>
         </thead>
         <tbody>
-          <% for (let i = 0; i < list.length; i++) { %>
+          <% for (let i = 0; i < list.length; i++) {
+            if (list[i].name === 'Admin') {
+              continue; // Bỏ qua nhà hàng tên 'Admin'
+            } %>
           <tr>
             <th scope="row"><%= i + 1 %></th>
             <td>
