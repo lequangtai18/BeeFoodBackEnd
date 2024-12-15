@@ -183,30 +183,33 @@
 
     // Hàm cập nhật dữ liệu bảng
     function updateTableData(data) {
+      // Sắp xếp mảng dữ liệu theo thời gian giảm dần
+      data.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+      // Xóa dữ liệu cũ trong bảng
       while (tableBody.rows.length > 0) {
         tableBody.deleteRow(0);
       }
+
+      // Thêm dữ liệu mới vào bảng sau khi sắp xếp
       data.forEach((order, index) => {
-        const totalPrice = order.products.reduce(
-          (sum, product) => sum + product.price,
-          0
-        );
         const row = document.createElement("tr");
         row.innerHTML = `
-        <td>
-            <ul>
-              <li>${++index}</li>
-            </ul>
-          </td>
-          <td>
-            <ul>
-               <a href="/donhang/${order._id}"><li>${order._id}</li></a>
-            </ul>
-          </td>
-          <td>${order.status === 3 ? "Hoàn thành" : "Đã hủy"}</td>
-          <td>${formatTimeVietNam(order.time)}</td>
-        `;
+      <td>
+        <ul>
+          <li>${index + 1}</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <a href="/donhang/${order._id}"><li>${order._id}</li></a>
+        </ul>
+      </td>
+      <td>${order.status === 3 ? "Hoàn thành" : "Đã hủy"}</td>
+      <td>${formatTimeVietNam(order.time)}</td>
+    `;
         tableBody.appendChild(row);
       });
     }
+
   </script>
