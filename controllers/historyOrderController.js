@@ -553,10 +553,10 @@ exports.getRevenueByDateRange = async (req, res) => {
 
       if (index === -1) {
         categories.push(date);
-        revenues.push(order.totalPrice || 0);
+        revenues.push(order.toltalprice || 0);
         sales.push(1);
       } else {
-        revenues[index] += order.totalPrice || 0;
+        revenues[index] += order.toltalprice || 0;
         sales[index] += 1;
       }
     });
