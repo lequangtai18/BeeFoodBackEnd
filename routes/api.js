@@ -148,21 +148,50 @@ router.post("/restaurant/delete/:id", apiRestaurant.deleteRestaurant);
 //products
 router.post("/product/delete/:id", apiProduct.ngungKinhDoanhProduct);
 router.get("/product/id/:id", apiProduct.getProduct);
+
+const removeAccents = (str) => {
+  return str
+    .normalize("NFD") // Chuyển chuỗi sang dạng ký tự cơ bản
+    .replace(/[\u0300-\u036f]/g, "") // Loại bỏ dấu
+    .toLowerCase(); // Chuyển về chữ thường
+};
+
 router.post("/search", async (req, res) => {
-  const dataRes = await apiProduct.dataProductRestaurant(req, res);
-  const data = dataRes.filter((dt, index) => dt.name.includes(req.body.search));
-  res.render("product/showProduct", {
-    list: data,
-    req: req,
-  });
+  const searchQuery = req.body.search ? removeAccents(req.body.search) : ""; // Chuẩn hóa chuỗi tìm kiếm
+
+  try {
+    const dataRes = await apiProduct.dataProductRestaurant(req, res);
+    const data = dataRes.filter((dt) => {
+      const normalizedName = removeAccents(dt.name); // Chuẩn hóa tên sản phẩm
+      return normalizedName.includes(searchQuery); // So sánh không phân biệt hoa, thường, không dấu
+    });
+
+    res.render("product/showProduct", {
+      list: data,
+      req: req,
+    });
+  } catch (error) {
+    res.status(500).send("Đã xảy ra lỗi: " + error.message);
+  }
 });
-router.post("/search/donhang", async (req, res) => {
-  const dataRes = await apiProduct.dataProductRestaurant(req, res);
-  const data = dataRes.filter((dt, index) => dt.name.includes(req.body.search));
-  res.render("product/showProduct", {
-    list: data,
-    req: req,
-  });
+
+router.post("/search", async (req, res) => {
+  const searchQuery = req.body.search ? removeAccents(req.body.search) : ""; // Chuẩn hóa chuỗi tìm kiếm
+
+  try {
+    const dataRes = await apiProduct.dataProductRestaurant(req, res);
+    const data = dataRes.filter((dt) => {
+      const normalizedName = removeAccents(dt.name); // Chuẩn hóa tên sản phẩm
+      return normalizedName.includes(searchQuery); // So sánh không phân biệt hoa, thường, không dấu
+    });
+
+    res.render("product/showProduct", {
+      list: data,
+      req: req,
+    });
+  } catch (error) {
+    res.status(500).send("Đã xảy ra lỗi: " + error.message);
+  }
 });
 
 router.get("/product/suggest", apiProduct.getSuggest);
@@ -187,7 +216,7 @@ router.post(
 router.post(
   "/product/addProduct",
   upload.single("image"),
-  apiSanPhamDangDuyet.addProduct
+  apiProduct.addProduct
 );
 
 //restaurant

@@ -1,0 +1,140 @@
+<%- include('../inc/header-user.ejs') %>
+
+
+<style>
+  /* Cấu trúc chung cho giao diện */
+  .order-detail-container {
+    max-width: 100%;
+    margin:auto;
+    text-align: center;
+    padding-left: 250px;
+  }
+
+  /* Header của trang chi tiết */
+  .order-detail-header h1 {
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  /* Bảng chi tiết đơn hàng */
+  .order-detail-table-container {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+  }
+
+  .order-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  .order-detail-table th,
+  .order-detail-table td {
+    padding: 12px 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+  }
+
+  .order-detail-table th {
+    background-color: #f1f1f1;
+  }
+
+  .order-detail-table tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+
+  /* Định dạng tổng cộng */
+  .order-total {
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+
+  /* Thông báo lỗi */
+  .error-message {
+    color: red;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+
+  /* Tối ưu cho màn hình nhỏ */
+  @media (max-width: 768px) {
+    .order-detail-table th, 
+    .order-detail-table td {
+      padding: 8px;
+    }
+
+    .order-detail-header h1 {
+      font-size: 22px;
+    }
+
+    .order-total {
+      font-size: 16px;
+    }
+  }
+</style>
+
+<div class="order-detail-container">
+  <div class="order-detail-header">
+    <h1>Chi tiết đơn hàng</h1>
+  </div>
+  
+  <div class="order-detail-table-container">
+    <% try { %>
+    <table class="order-detail-table">
+      <thead>
+        <tr>
+          <th>Mã Đơn Hàng</th>
+          <th>Tên</th>
+          <th>Số điện thoại</th>
+          <th>Địa Chỉ Đơn Hàng</th>
+          <th>Sản Phẩm</th>
+          <th>Số lượng</th>
+          <th>Đơn giá</th>
+          <th>Phương Thức Thanh Toán</th>
+          <th>Trạng Thái</th>
+          <th>Ghi Chú</th>
+          <th>Mã Voucher</th>
+          <th>Tổng giá</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let i = 0; i < data.product.length; i++) { %>
+        <tr>
+          <% if (i === 0) { %>
+          <td rowspan="<%= data.product.length %>"><%= data._id %></td>
+          <td rowspan="<%= data.product.length %>"><%= data.username %></td>
+          <td rowspan="<%= data.product.length %>"><%= data.phone %></td>
+          <td rowspan="<%= data.product.length %>"><%= data.address %></td>
+          <% } %>
+          <td><%= data.product[i].name %></td>
+          <td><%= data.product[i].quantity  %></td>
+          <td><%= data.product[i].price  %></td>
+          <td><%= data.phuongthucthanhtoan === 'cash' ? 'Thanh toán tiền mặt' : 'Chuyển khoản' %></td>
+          <td><%= data.status === 1 ? 'Đã xác nhận' : data.status === 2 ? 'Đang giao' : data.status === 3 ? 'Đã giao' : 'Chờ xác nhận' %></td>
+          <td><%= data.notes %></td>
+          <td><%= data.voucherId %></td>
+          <td><%= data.product[i].quantity * data.product[i].price %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+
+    <div class="order-total">
+      <p><strong>Tổng cộng:</strong> <%= data.totalPrice %> VND</p>
+    </div>
+    
+    <% } catch (error) { %>
+    <p class="error-message">Đã xảy ra lỗi khi tải chi tiết đơn hàng.</p>
+    <% console.error(error); %>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../inc/footer.ejs') %>

@@ -72,7 +72,8 @@ exports.editProduct = async (req, res, next) => {
     _id: id,
   });
   return product;
-};
+};  
+
 exports.dataProductRestaurant = async (req, res, next) => {
   const id = req.session.user?._id;
   try {
@@ -174,41 +175,32 @@ exports.editDataProduct = async (req, res, next) => {
 };
 exports.addProduct = async (req, res, next) => {
   const id = req.session.user?._id;
-
-  if (!req.file) {
-    return res.status(400).send("Không có file được tải lên!");
-  }
-  const nameFile = req.file.originalname;
-  const blob = firebase.bucket.file(nameFile);
-  const blobWriter = blob.createWriteStream({
-    metadata: {
-      contentType: req.file.mimetype,
-    },
-  });
-
-   
-  // Kiểm tra giá trị số
-  const realPrice = Number.parseInt(req.body.realPrice, 10);
-  const discountPrice = Number.parseInt(req.body.discountPrice, 10);
-
-  if (isNaN(realPrice) || isNaN(discountPrice)) {
-    return res.render("addProduct", { error: "Giá trị giá tiền không hợp lệ!" });
-  }
-
-  if (realPrice < 0 || discountPrice < 0) {
-    return res.render("addProduct", { error: "Giá trị không được là số âm!" });
-  }
-
-  blobWriter.on("finish", () => {
-    const product = {
-      ...req.body,
-      realPrice,
-      discountPrice,
-      description: String(req.body.description),
-      restaurantId: id,
-      image: `https://firebasestorage.googleapis.com/v0/b/datn-de212-15d26.appspot.com/o/${nameFile}?alt=media`,
-      createdAt: timestamp,
-    };
+    const nameFile = req.file.originalname;
+    const blob = firebase.bucket.file(nameFile);
+    const blobWriter = blob.createWriteStream({
+      metadata: {
+        contentType: req.file.mimetype,
+      },
+    });
+  
+    blobWriter.on("finish", () => {
+      const realPrice = Number.parseInt(req.body.realPrice);
+      const discountPrice = Number.parseInt(req.body.discountPrice);
+  
+      // Kiểm tra giá tiền không âm
+      if (realPrice < 0 || discountPrice < 0) {
+        return res.status(400).json({ msg: "Giá tiền phải lớn hơn hoặc bằng 0" });
+      }
+  
+      const product = {
+        ...req.body,
+        realPrice: Number.parseInt(req.body.realPrice),
+        discountPrice: Number.parseInt(req.body.discountPrice),
+        description: Number.parseInt(req.body.description),
+        description: String(req.body.description),
+        restaurantId: id,
+        image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
+      };
 
      // Thêm vào cơ sở dữ liệu
      productModel.productModel
@@ -221,12 +213,6 @@ exports.addProduct = async (req, res, next) => {
        res.status(500).send("Đã xảy ra lỗi khi thêm sản phẩm.");
      });
  });
-
- blobWriter.on("error", (error) => {
-   console.error("Lỗi khi tải lên file:", error);
-   res.status(500).send("Lỗi khi tải lên file.");
- });
-
  blobWriter.end(req.file.buffer);
   
 };

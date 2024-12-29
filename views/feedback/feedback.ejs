@@ -48,29 +48,33 @@
                 </tr>
             </thead>
             <tbody>
+                <% let index = 1; %>
                 <% for (let i = 0; i < data.length; i++) { %>
-                <tr>
-                    <th scope="row"><%= i + 1 %></th>
-                    <td class="product-name" data-index="<%= i %>"><%= data[i].name %></td>
-                    <td class="product-image">
-                        <img
-                            src="<%= data[i].image %>"
-                            alt="<%= data[i].name %>"
-                            style="max-width: 100px"
-                        />
-                    </td>
-                    <td>
-                        <button 
-                            class="btn btn-info btn-sm view-comments" 
-                            data-index="<%= i %>"
-                            data-toggle="modal" 
-                            data-target="#myModal">
-                            Xem bình luận
-                        </button>
-                    </td>
-                </tr>
+                    <% if (data[i].listComment && data[i].listComment.length > 0) { %>
+                        <tr>
+                            <th scope="row"><%= index++ %></th>
+                            <td class="product-name" data-index="<%= i %>"><%= data[i].name %></td>
+                            <td class="product-image">
+                                <img
+                                    src="<%= data[i].image %>"
+                                    alt="<%= data[i].name %>"
+                                    style="max-width: 100px"
+                                />
+                            </td>
+                            <td>
+                                <button 
+                                    class="btn btn-info btn-sm view-comments" 
+                                    data-index="<%= i %>"
+                                    data-toggle="modal" 
+                                    data-target="#myModal">
+                                    Xem bình luận
+                                </button>
+                            </td>
+                        </tr>
+                    <% } %>
                 <% } %>
             </tbody>
+            
         </table>
     </div>
 

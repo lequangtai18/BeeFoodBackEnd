@@ -1,6 +1,151 @@
 <%- include('../inc/header-user.ejs') %>
 
+<h2>Duyệt đơn hàng</h2>
+
+<style>
+  .form-container {
+    margin-top: 80px;
+    margin-left: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .form-group label {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    font-size: 14px;
+    width: 300px;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .table th,
+  .table td {
+    border: 1px solid #dee2e6;
+    padding: 12px;
+    text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .table th {
+    font-weight: bold;
+    background-color: #f1f1f1;
+  }
+
+  .table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .table td {
+    border: 1px solid #e0e0e0;
+  }
+
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .table td button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .table td button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+
+  .update-status-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .update-status-container select,
+  .update-status-container button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .update-status-container button {
+    background-color: #28a745;
+    color: white;
+  }
+
+  .update-status-container button:hover {
+    background-color: #218838;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  @media (max-width: 768px) {
+    .table th,
+    .table td {
+      font-size: 14px;
+    }
+
+    .update-status-container {
+      flex-direction: column;
+    }
+
+    .form-container {
+      margin-left: 10px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+    }
+  }
+</style>
+
 <div style="margin-top: 80px; margin-left: 320px">
+  <div style="margin-bottom: 20px;">
+    <!-- Form tìm kiếm -->
+    <label for="searchInput">Tìm kiếm:</label>
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Nhập từ khóa tìm kiếm..."
+      onkeyup="searchOrders()"
+      style="padding: 5px; border-radius: 4px; border: 1px solid #ced4da; width: 300px;"
+    />
+  </div>
   <div>
     <label for="statusFilter">Lọc theo trạng thái:</label>
     <select id="statusFilter" onchange="filterOrdersByStatus()">
@@ -15,13 +160,14 @@
     <table class="table">
       <thead>
         <tr>
-          <th scope="col">Mã Đơn Hàng</th>
-          <th scope="col">Địa Chỉ Đơn Hàng</th>
-          <th scope="col">Sản Phẩm</th>
-          <th scope="col">Phương Thức Thanh Toán</th>
-          <th scope="col">Trạng Thái</th>
-          <th scope="col">Ghi Chú</th>
-          <th scope="col">Cập Nhật Trạng Thái</th>
+          <th style="width: 13%;">Mã Đơn Hàng</th>
+          <th style="width: 20%;">Địa Chỉ Đơn Hàng</th>
+          <th style="width: 15%;">Sản Phẩm</th>
+          <th style="width: 15%;">Phương Thức Thanh Toán</th>
+          <th style="width: 10%;">Trạng Thái</th>
+          <th style="width: 10%;">Ghi Chú</th>
+          <th style="width: 10%;">Chi tiết</th> <!-- New column -->
+          <th style="width: 25%;">Cập Nhật Trạng Thái</th>
         </tr>
       </thead>
       <tbody id="orderTableBody">
@@ -29,6 +175,7 @@
       </tbody>
     </table>
   </div>
+
 </div>
 
 <script>
@@ -77,6 +224,13 @@
     }
   }
 
+  function updateOrderRow(orderId, newStatus) {
+  const row = document.querySelector(`tr[data-orderid="${orderId}"]`);
+  if (row) {
+    row.querySelector("td:nth-child(5)").textContent = getOrderStatusText(newStatus);
+  }
+}
+
   function isValidStatusChange(currentStatus, newStatus) {
     currentStatus = parseInt(currentStatus);
     newStatus = parseInt(newStatus);
@@ -108,6 +262,31 @@
     }
   }
 
+  function searchOrders() {
+  const searchInput = document.getElementById("searchInput").value.toLowerCase();
+  const tableBody = document.getElementById("orderTableBody");
+
+  // Lọc đơn hàng dựa trên từ khóa
+  const filteredOrders = orders.filter((order) => {
+    const orderId = order._id.toLowerCase();
+    const address = order.address.toLowerCase();
+    const notes = order.notes ? order.notes.toLowerCase() : "";
+    const products = order.products
+      .map((product) => `${product.name} x${product.quantity}`.toLowerCase())
+      .join(" ");
+
+    return (
+      orderId.includes(searchInput) ||
+      address.includes(searchInput) ||
+      notes.includes(searchInput) ||
+      products.includes(searchInput)
+    );
+  });
+
+  // Hiển thị lại danh sách đơn hàng
+  displayOrders(filteredOrders);
+}
+
   function filterOrdersByStatus() {
     const statusFilter = document.getElementById("statusFilter");
     const selectedStatus = statusFilter.value;
@@ -126,65 +305,69 @@
   }
 
   function displayOrders(orders) {
-    const tableBody = document.getElementById("orderTableBody");
+  const tableBody = document.getElementById("orderTableBody");
 
-     // Sắp xếp đơn hàng theo ngày tạo (createdAt), mới nhất lên đầu
-     orders.sort((a, b) => {
-      if (a.createdAt && b.createdAt) {
-          return new Date(b.createdAt) - new Date(a.createdAt); // Nếu có trường createdAt
-      } else {
-          return parseInt(b._id.substring(0, 8), 16) - parseInt(a._id.substring(0, 8), 16); // Nếu không, sắp xếp theo _id
-      }
+  // Sắp xếp đơn hàng theo ngày tạo (createdAt), mới nhất lên đầu
+  orders.sort((a, b) => {
+    if (a.createdAt && b.createdAt) {
+      return new Date(b.createdAt) - new Date(a.createdAt); // Nếu có trường createdAt
+    } else {
+      return parseInt(b._id.substring(0, 8), 16) - parseInt(a._id.substring(0, 8), 16); // Nếu không, sắp xếp theo _id
+    }
   });
 
-  // Lọc và hiển thị các đơn hàng không có trạng thái "Đã giao" (3) và "Đã hủy" (4)
-  tableBody.innerHTML = ""; // Xóa nội dung cũ trong bảng
+    // Lọc và hiển thị các đơn hàng không có trạng thái "Đã giao" (3) và "Đã hủy" (4)
+    tableBody.innerHTML = ""; // Xóa nội dung cũ trong bảng
 
     orders
-      .filter((order) => order.status !== 3 && order.status !== 4)
-      .forEach((order) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${order._id}</td>
-          <td>${order.address}</td>
-          <td>${order.products
+    .filter((order) => order.status !== 3 && order.status !== 4)
+    .forEach((order) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${order._id}</td>
+        <td class="truncate" title="${order.address}">${order.address}</td>
+        <td class="truncate" title="${order.products
+          .map((product) => `${product.name} x${product.quantity}`)
+          .join(", ")}">
+          ${order.products
             .map((product) => `${product.name} x${product.quantity}`)
-            .join("<br>")}</td>
-          <td>${
-            order.phuongthucthanhtoan === "cash"
-              ? "Thanh toán tiền mặt"
-              : "Chuyển khoản"
-          }</td>
-          <td>${getOrderStatusText(order.status)}</td>
-          <td>${order.notes}</td>
-          <td>
-            <form onsubmit="updateOrderStatus(event, '${order._id}', '${
-          order.status
-        }')">
-              <div class="update-status-container">
-                <select id="statusSelect-${order._id}" data-orderid="${
-          order._id
-        }">
-                  <option value="1" ${
-                    order.status === 1 ? "selected" : ""
-                  }>Đã xác nhận</option>
-                  <option value="2" ${
-                    order.status === 2 ? "selected" : ""
-                  }>Đang giao</option>
-                  <option value="3" ${
-                    order.status === 3 ? "selected" : ""
-                  }>Đã giao</option>
-                  <option value="4" ${
-                    order.status === 4 ? "selected" : ""
-                  }>Đã hủy</option>
-                </select>
-                <button type="submit">Cập nhật</button>
-              </div>
-            </form>
-          </td>
-        `;
-        tableBody.appendChild(row);
-      });
-  }
+            .join("<br>")}
+        </td>
+        <td>${
+          order.phuongthucthanhtoan === "cash"
+            ? "Thanh toán tiền mặt"
+            : "Chuyển khoản"
+        }</td>
+        <td>${getOrderStatusText(order.status)}</td>
+        <td>${order.notes}</td>
+        <td>
+          <button onclick="viewOrderDetails('${order._id}')">Chi tiết</button>
+        </td>
+        <td>
+          <form onsubmit="updateOrderStatus(event, '${order._id}', '${
+        order.status
+      }')">
+            <div class="update-status-container">
+              <select id="statusSelect-${order._id}" data-orderid="${
+        order._id
+      }">
+                <option value="1" ${order.status === 1 ? "selected" : ""}>Đã xác nhận</option>
+                <option value="2" ${order.status === 2 ? "selected" : ""}>Đang giao</option>
+                <option value="3" ${order.status === 3 ? "selected" : ""}>Đã giao</option>
+                <option value="4" ${order.status === 4 ? "selected" : ""}>Đã hủy</option>
+              </select>
+              <button type="submit">Cập nhật</button>
+            </div>
+          </form>
+        </td>
+      `;
+      tableBody.appendChild(row);
+    });
+}
+
+function viewOrderDetails(orderId) {
+  window.location.href = `/sanpham/${orderId}`;
+}
+
 </script>
 <%- include('../inc/footer.ejs') %>

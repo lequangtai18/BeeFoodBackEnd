@@ -56,6 +56,7 @@ router.get("/editVoucher/:id", async function (req, res, next) {
     voucher: data,
   });
 });
+
 router.get("/donhang/:id", async function (req, res, next) {
   const data = await history.getDonHangChiTiet(req.params.id);
   console.log(data);
@@ -65,6 +66,17 @@ router.get("/donhang/:id", async function (req, res, next) {
     req: req,
   });
 });
+
+router.get("/sanpham/:id", async function (req, res, next) {
+  const data = await history.getSanPhamChiTiet(req.params.id);
+  console.log(data);
+  res.render("singlemenu/chitietsanpham", {
+    title: "Express",
+    data: data,
+    req: req,
+  });
+});
+
 router.get("/home", function (req, res, next) {
   res.render("home", { title: "Express" });
 });

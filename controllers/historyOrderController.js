@@ -34,6 +34,7 @@ exports.createOrderSuccess = async (req, res, next) => {
     return res.status(500).json({ msg: error.message });
   }
 };
+
 exports.getDonHangChiTiet = async (id) => {
   const data = await historyModel.History.findOne({ _id: id });
   const user = await userController.userModel.findOne({
@@ -50,6 +51,30 @@ exports.getDonHangChiTiet = async (id) => {
   };
   return dataConcat;
 };
+
+exports.getSanPhamChiTiet = async (id) => {
+  const data = await historyModel.History.findOne({ _id: id });
+  const user = await userController.userModel.findOne({
+    _id: new mongoose.Types.ObjectId(data?.userId),
+  });
+  const { username, phone } = user;
+  const dataConcat = {
+    product: data.products,
+    _id: data?._id,
+    username,
+    phone,
+    address: data.address,
+    phuongthucthanhtoan: data.phuongthucthanhtoan,
+    status: data.status,
+    notes: data.notes,
+    voucherId : data.voucherId,
+    price: data.price,
+    totalPrice: data.toltalprice,
+    time : data.time
+  };
+  return dataConcat;
+};
+
 exports.getChiTiet = async (req, res) => {
   try {
     const { id } = req.params;
