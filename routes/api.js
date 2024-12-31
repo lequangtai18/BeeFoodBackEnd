@@ -242,5 +242,20 @@ router.post("/admin/revenue-by-branch", apiHistory.getRevenueByBranch);
 
 router.post('/admin/revenue-all-branches', apiHistory.getTotalRevenueByDateRange);
 
+// router.get("recent-purchses", apishowapishow)
+
+// router.get("recent-purchases", async(req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     const recentPurchases = await Purchase.find({ userId: userId })
+//       .sort({ date: -1 })
+//       .limit(5);
+
+//     res.json({ recent: recentPurchases });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Error fetching recent purchases');
+//   }
+// });
 
 module.exports = router;

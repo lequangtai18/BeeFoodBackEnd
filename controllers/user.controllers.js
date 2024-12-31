@@ -47,6 +47,7 @@ exports.register = async (req, res, next) => {
     return res.status(500).json({ msg: error.message });
   }
 };
+
 exports.update = async (req, res, next) => {
   const userId = req.params.id;
   const { phone, currentPassword, gender, birthday, password } = req.body;

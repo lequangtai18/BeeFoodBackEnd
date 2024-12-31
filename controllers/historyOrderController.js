@@ -5,6 +5,7 @@ var userController = require("../models/users.model");
 var voucherModel = require("../models/voucher.model.js");
 var apiVoucher = require("../controllers/voucher.controller");
 var apiNotify = require("../controllers/notify.controller.js");
+const { History } = require("../models/history.js");
 
 const moment = require("moment");
 exports.createOrderSuccess = async (req, res, next) => {
@@ -371,6 +372,7 @@ exports.getRevenueRestaurant = async (req, res, next) => {
   try {
     const user = req.session.user;
     const restaurantId = user._id;
+    const bills = await History.find({ status: 3 });
     const billsToday = await historyModel.History.find({
       time: { $gte: startOfToday },
       status: 3,
@@ -433,12 +435,102 @@ exports.getRevenueRestaurant = async (req, res, next) => {
       categoriesMonth: dataForChartMonth.categories,
       dataMonth: dataForChartMonth.data,
       revenueMonth: dataForChartMonth.revenue,
+      
+      topSelling: topSelling(bills),
+      recent: await recent(bills),
     });
   } catch (error) {
     console.error("Lỗi khi lấy dữ liệu từ bảng Bill:", error);
     res.status(500).send("Đã xảy ra lỗi khi lấy dữ liệu từ bảng Bill");
   }
 };
+
+function topSelling(bills) {
+  const productInfo = {};
+
+  // Lặp qua tất cả các hóa đơn
+  for (const bill of bills) {
+    // Lặp qua tất cả các sản phẩm trong hóa đơn
+    for (const product of bill.products) {
+      const productId = product.productId.toString(); // Chuyển ObjectId thành chuỗi để sử dụng làm khóa
+
+      // Tăng số lần xuất hiện của productId
+      if (productInfo[productId]) {
+        productInfo[productId].quantity += product.quantity;
+        productInfo[productId].totalRevenue += product.price * product.quantity;
+      } else {
+        productInfo[productId] = {
+          name: product.name,
+          quantity: product.quantity,
+          totalRevenue: product.price * product.quantity,
+          imageURL: product.image, // Thêm link ảnh
+          price: product.price, // Thêm giá tiền
+        };
+      }
+    }
+  }
+
+  // Sắp xếp productInfo theo số lần xuất hiện giảm dần
+  const sortedProducts = Object.keys(productInfo).sort(
+    (a, b) => productInfo[b].quantity - productInfo[a].quantity
+  );
+
+  // Lấy ra thông tin của 10 sản phẩm xuất hiện nhiều nhất
+  const topProducts = sortedProducts.slice(0, 10).map((productId) => ({
+    name: productInfo[productId].name,
+    quantity: productInfo[productId].quantity,
+    totalRevenue: productInfo[productId].totalRevenue,
+    imageURL: productInfo[productId].imageURL, // Link ảnh
+    price: productInfo[productId].price, // Giá tiền
+  }));
+  return topProducts;
+}
+
+async function recent(bills) {
+  try {
+    // Sắp xếp mảng bills theo thời gian giảm dần
+    const sortedBills = bills.sort(
+      (a, b) => new Date(b.time) - new Date(a.time)
+    );
+
+    // Chọn 6 phần tử đầu tiên
+    const recentBills = sortedBills.slice(0, 6);
+
+    // Lấy thông tin cần thiết từ mỗi đơn hàng
+    const result = await Promise.all(
+      recentBills.map(async (bill) => {
+        // Lấy tên món ăn từ sản phẩm đầu tiên của đơn hàng
+        const productName = bill.products[0].name;
+
+        // Lấy thông tin người dùng từ userModel
+        const user = await userModel.userModel.findById(bill.userId);
+        const userName = user ? user.username : null;
+
+        // Lấy thông tin nhà hàng từ restaurantsModel
+        const restaurant = await restaurantModel.restaurantModel.findById(
+          bill.products[0].restaurantId
+        );
+        const restaurantName = restaurant ? restaurant.name : null;
+
+        // Định dạng thời gian
+        const timeAgo = getTimeAgo(bill.time);
+
+        return {
+          productName,
+          restaurantName,
+          userName,
+          time: timeAgo,
+        };
+      })
+    );
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error("Error in recent function:", error);
+    return [];
+  }
+}
+
 function organizeDataByHour(bills) {
   const roundedTimes = bills.map((bill) => {
     const time = new Date(bill.time);
