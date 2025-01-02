@@ -242,6 +242,8 @@ router.post("/admin/revenue-by-branch", apiHistory.getRevenueByBranch);
 
 router.post('/admin/revenue-all-branches', apiHistory.getTotalRevenueByDateRange);
 
+router.get('/getCoordinates/:id', apiRestaurant.getCoordinatesByRestaurantId);
+
 // router.get("recent-purchses", apishowapishow)
 
 // router.get("recent-purchases", async(req, res) => {

@@ -404,3 +404,26 @@ exports.getBranches = async (req, res) => {
     res.status(500).json({ msg: "Lỗi máy chủ nội bộ." });
   }
 };
+
+
+
+exports.getCoordinatesByRestaurantId = async (req, res, next) => {
+  const restaurantId = req.params.id;
+
+  try {
+    const restaurant = await restaurantModel.restaurantModel.findById(restaurantId).select('latitude longitude');
+
+    if (!restaurant) {
+      return res.status(404).json({ msg: 'Nhà hàng không tồn tại' });
+    }
+
+    return res.status(200).json({
+      latitude: restaurant.latitude,
+      longitude: restaurant.longitude,
+      msg: 'Lấy tọa độ nhà hàng thành công',
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy tọa độ nhà hàng:', error);
+    return res.status(500).json({ msg: error.message });
+  }
+};
