@@ -129,56 +129,56 @@
               </div>
             </div>
 
-             <!-- Top Selling -->
-          <div class="col-12">
-            <div class="card top-selling overflow-auto">
-              <div class="card-body pb-0">
-                <h5 class="card-title">Top Selling</h5>
+            <!-- Top Selling -->
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Top Selling</h5>
 
-                <table class="table table-borderless">
-                  <thead>
-                    <tr>
-                      <th scope="col" class="sortable">Ảnh</th>
-                      <th scope="col" class="sortable">Tên sản phẩm</th>
-                      <th scope="col" class="sortable" data-sort="number">
-                        Giá
-                      </th>
-                      <th scope="col" class="sortable" data-sort="number" style="text-align: center">
-                        Đã bán
-                      </th>
-                      <th scope="col" class="sortable" data-sort="number" style="text-align: right">
-                        Doanh thu
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% for (let i=0; i < topSelling.length; i++) { %>
+                  <table class="table table-borderless">
+                    <thead>
                       <tr>
-                        <td>
-                          <img src="<%= topSelling[i].imageURL %>" alt="<%= topSelling[i].name %>"
-                            style="max-width: 50px" />
-                        </td>
-                        <td>
-                          <%= topSelling[i].name %>
-                        </td>
-                        <td>
-                          <%= topSelling[i].price %>
-                        </td>
-                        <td style="text-align: center">
-                          <%= topSelling[i].quantity %>
-                        </td>
-                        <td style="text-align: right">
-                          <%= topSelling[i].totalRevenue %>
-                        </td>
+                        <th scope="col" class="sortable">Ảnh</th>
+                        <th scope="col" class="sortable">Tên sản phẩm</th>
+                        <th scope="col" class="sortable" data-sort="number">
+                          Giá
+                        </th>
+                        <th scope="col" class="sortable" data-sort="number" style="text-align: center">
+                          Đã bán
+                        </th>
+                        <th scope="col" class="sortable" data-sort="number" style="text-align: right">
+                          Doanh thu
+                        </th>
                       </tr>
-                      <% } %>
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      <% for (let i=0; i < topSelling.length; i++) { %>
+                        <tr>
+                          <td>
+                            <img src="<%= topSelling[i].imageURL %>" alt="<%= topSelling[i].name %>"
+                              style="max-width: 50px" />
+                          </td>
+                          <td>
+                            <%= topSelling[i].name %>
+                          </td>
+                          <td>
+                            <%= topSelling[i].price %>
+                          </td>
+                          <td style="text-align: center">
+                            <%= topSelling[i].quantity %>
+                          </td>
+                          <td style="text-align: right">
+                            <%= topSelling[i].totalRevenue %>
+                          </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
-          <!-- End Top Selling -->
-           
+            <!-- End Top Selling -->
+
           </div>
         </div>
 
@@ -187,7 +187,7 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Hoạt động gần đây</h5>
-  
+
               <div class="activity">
                 <% for (let i=0; i < recent.length; i++) { %>
                   <div class="activity-item d-flex">
@@ -201,18 +201,18 @@
                     </div>
                   </div>
                   <% } %>
-  
+
                     <!-- End activity item-->
               </div>
             </div>
           </div>
           <!-- End Recent Activity -->
-  
+
           <!-- News & Updates Traffic -->
           <div class="card">
             <div class="card-body pb-0">
               <h5 class="card-title">Thông tin</h5>
-  
+
               <div class="news">
                 <div class="post-item clearfix">
                   <img
@@ -228,7 +228,7 @@
                     Chiến thắng ngược 2-1 trước Brentford giúp Aston Villa tăng...
                   </p>
                 </div>
-  
+
                 <div class="post-item clearfix">
                   <img
                     src="https://i1-thethao.vnecdn.net/2023/12/18/464qrq5xubmppbieconxklowme-170-6976-9929-1702840564.jpg?w=380&h=228&q=100&dpr=1&fit=crop&s=9p0aDt3JsmEwupTMSyZ1jw"
@@ -242,7 +242,7 @@
                     được một điểm từ trận
                   </p>
                 </div>
-  
+
                 <div class="post-item clearfix">
                   <img
                     src="https://i1-vnexpress.vnecdn.net/2023/12/17/anh-chup-man-hinh-2023-12-17-l-2946-8241-1702803706.png?w=220&h=132&q=100&dpr=1&fit=crop&s=Jlur_MTExeLwgvgvTOunwQ"
@@ -256,7 +256,7 @@
                     miền
                   </p>
                 </div>
-  
+
                 <div class="post-item clearfix">
                   <img
                     src="https://i1-vnexpress.vnecdn.net/2023/12/17/tongthongputin8470jpgwebp-1702-4014-9733-1702822405.jpg?w=220&h=132&q=100&dpr=1&fit=crop&s=FNpVRFsy-u4qMkEhOGe81g"
@@ -270,7 +270,7 @@
                     năng tự chủ nhằm đối phó những áp lực từ phương Tây.
                   </p>
                 </div>
-  
+
                 <div class="post-item clearfix">
                   <img
                     src="https://i1-thethao.vnecdn.net/2023/12/17/A1-jpeg-4843-1702822493.jpg?w=1020&h=0&q=100&dpr=1&fit=crop&s=hU8meFhx4amBUHZeKkGrZw"
@@ -387,43 +387,54 @@
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const response = await fetch("/api/recent-purchases");
-    if (!response.ok) {
-      throw new Error("Không thể tải hoạt động gần đây.");
-    }
+      try {
+        const response = await fetch("/api/recent-purchases");
+        if (!response.ok) {
+          throw new Error("Không thể tải hoạt động gần đây. Mã lỗi: " + response.status);
+        }
 
-    const recentPurchases = await response.json();
-    
-    const activityContainer = document.querySelector(".activity");
-    activityContainer.innerHTML = "";  // Xóa dữ liệu cũ trước khi thêm mới
+        const recentPurchases = await response.json();
+        console.log("Dữ liệu hoạt động gần đây:", recentPurchases);
 
-    recentPurchases.forEach(purchase => {
-      const activityItem = document.createElement("div");
-      activityItem.classList.add("activity-item", "d-flex");
+        if (!Array.isArray(recentPurchases)) {
+          throw new Error("Dữ liệu nhận được không phải là mảng.");
+        }
 
-      const activityLabel = document.createElement("div");
-      activityLabel.classList.add("activite-label");
-      activityLabel.textContent = purchase.time;
+        const activityContainer = document.querySelector(".activity");
+        activityContainer.innerHTML = "";  // Xóa dữ liệu cũ trước khi thêm mới
 
-      const activityBadge = document.createElement("i");
-      activityBadge.classList.add("bi", "bi-circle-fill", "activity-badge", "text-success", "align-self-start");
+        recentPurchases.forEach(purchase => {
+          // Kiểm tra xem các trường dữ liệu có tồn tại không
+          if (!purchase.time || !purchase.userName || !purchase.productName) {
+            console.warn("Dữ liệu không đầy đủ cho purchase:", purchase);
+            return;
+          }
 
-      const activityContent = document.createElement("div");
-      activityContent.classList.add("activity-content");
-      activityContent.textContent = `${purchase.userName} đã mua ${purchase.productName} tại nhà hàng`;
+          const activityItem = document.createElement("div");
+          activityItem.classList.add("activity-item", "d-flex");
 
-      activityItem.appendChild(activityLabel);
-      activityItem.appendChild(activityBadge);
-      activityItem.appendChild(activityContent);
+          const activityLabel = document.createElement("div");
+          activityLabel.classList.add("activity-label"); // Sửa lỗi chính tả ở đây
+          activityLabel.textContent = purchase.time;
 
-      activityContainer.appendChild(activityItem);
+          const activityBadge = document.createElement("i");
+          activityBadge.classList.add("bi", "bi-circle-fill", "activity-badge", "text-success", "align-self-start");
+
+          const activityContent = document.createElement("div");
+          activityContent.classList.add("activity-content");
+          activityContent.textContent = `${purchase.userName} đã mua ${purchase.productName} tại nhà hàng`;
+
+          activityItem.appendChild(activityLabel);
+          activityItem.appendChild(activityBadge);
+          activityItem.appendChild(activityContent);
+
+          activityContainer.appendChild(activityItem);
+        });
+      } catch (error) {
+        console.error("Lỗi khi tải hoạt động gần đây:", error);
+      }
     });
-  } catch (error) {
-    console.error(error);
-    alert("Không thể tải hoạt động mua gần đây.");
-  }
-});
+
 
     // Xử lý sự kiện lọc theo khoảng ngày
     document
@@ -464,7 +475,7 @@
 
 
   <script>
-    
+
     function updateCardData(filter, billsCount) {
       // Đặt nội dung của thẻ title
       document.getElementById("filterSpan").innerText = `| ${filter}`;

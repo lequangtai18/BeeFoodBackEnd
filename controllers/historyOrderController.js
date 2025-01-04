@@ -8,6 +8,7 @@ var apiNotify = require("../controllers/notify.controller.js");
 const { History } = require("../models/history.js");
 
 const moment = require("moment");
+const { restaurantModel } = require("../models/restaurant.model.js");
 exports.createOrderSuccess = async (req, res, next) => {
   try {
     const date = new Date();
@@ -617,11 +618,11 @@ async function recent(bills, restaurantId) {
         const productName = bill.products[0].name;
 
         // Lấy thông tin người dùng từ userModel
-        const user = await userModel.userModel.findById(bill.userId);
+        const user = await userController.userModel.findById(bill.userId);
         const userName = user ? user.username : null;
 
         // Lấy thông tin nhà hàng từ restaurantsModel
-        const restaurant = await restaurantModel.restaurantModel.findById(
+        const restaurant = await restaurantModel.findById(
           bill.products[0].restaurantId
         );
         const restaurantName = restaurant ? restaurant.name : null;
@@ -643,6 +644,30 @@ async function recent(bills, restaurantId) {
     console.error("Error in recent function:", error);
     return [];
   }
+}
+
+function getTimeAgo(time) {
+  const now = new Date();
+  const past = new Date(time);
+  const diffInSeconds = Math.floor((now - past) / 1000);
+
+  const intervals = [
+    { label: 'năm', seconds: 31536000 },
+    { label: 'tháng', seconds: 2592000 },
+    { label: 'tuần', seconds: 604800 },
+    { label: 'ngày', seconds: 86400 },
+    { label: 'giờ', seconds: 3600 },
+    { label: 'phút', seconds: 60 },
+    { label: 'giây', seconds: 1 },
+  ];
+
+  for (const interval of intervals) {
+    const count = Math.floor(diffInSeconds / interval.seconds);
+    if (count >= 1) {
+      return `${count} ${interval.label} trước`;
+    }
+  }
+  return 'vừa xong';
 }
 
 
