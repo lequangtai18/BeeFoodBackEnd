@@ -18,6 +18,7 @@
             <th scope="col">Tên sản phẩm</th>
             <th scope="col">Số lượng</th>
             <th scope="col">Đơn giá</th>
+            <th scope="col">Ship</th>
             <th scope="col">Thành tiền</th>
           </tr>
         </thead>
@@ -33,7 +34,8 @@
             <td><%= data.product[i].name %></td>
             <td><%= data.product[i].quantity %></td>
             <td><%= data.product[i].price %></td>
-            <td><%= data.product[i].quantity * data.product[i].price %></td>
+            <td><%= data.deliveryFee %></td>
+            <td><%= data.product[i].quantity * data.product[i].price + data.deliveryFee %></td>
           </tr>
           <% } %>
         </tbody>

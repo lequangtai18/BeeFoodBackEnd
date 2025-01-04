@@ -101,6 +101,7 @@
           <th>Trạng Thái</th>
           <th>Ghi Chú</th>
           <th>Mã Voucher</th>
+          <th>Ship</th>
           <th>Tổng giá</th>
         </tr>
       </thead>
@@ -120,6 +121,7 @@
           <td><%= data.status === 1 ? 'Đã xác nhận' : data.status === 2 ? 'Đang giao' : data.status === 3 ? 'Đã giao' : 'Chờ xác nhận' %></td>
           <td><%= data.notes %></td>
           <td><%= data.voucherId %></td>
+          <td><%= data.deliveryFee %></td>
           <td><%= data.product[i].quantity * data.product[i].price %></td>
         </tr>
         <% } %>

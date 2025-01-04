@@ -54,6 +54,12 @@ const historySchame = new mongoose.Schema(
       type: String,
       require: true,
     },
+    deliveryFee: {
+      // Thêm phí giao hàng
+      type: Number,
+      required: true,
+      default: 0, // Giá trị mặc định là 0 nếu không có
+    },
     status: {
       type: Number,
       required: true,

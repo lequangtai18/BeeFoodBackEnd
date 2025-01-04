@@ -14,6 +14,7 @@ exports.createOrderSuccess = async (req, res, next) => {
     date.setHours(date.getHours() + 7);
     const OrderSuccess = new historyModel.History({
       ...req.body,
+      deliveryFee: req.body.deliveryFee || 0,
       time: date,
     });
     const voucherId = req.body.voucherId;
@@ -49,6 +50,7 @@ exports.getDonHangChiTiet = async (id) => {
     phone,
     address: data.address,
     totalPrice: data.toltalprice,
+    deliveryFee: data.deliveryFee,
   };
   return dataConcat;
 };
@@ -68,10 +70,11 @@ exports.getSanPhamChiTiet = async (id) => {
     phuongthucthanhtoan: data.phuongthucthanhtoan,
     status: data.status,
     notes: data.notes,
-    voucherId : data.voucherId,
+    voucherId: data.voucherId,
     price: data.price,
     totalPrice: data.toltalprice,
-    time : data.time
+    deliveryFee: data.deliveryFee,
+    time: data.time
   };
   return dataConcat;
 };
@@ -94,7 +97,10 @@ exports.getChiTiet = async (req, res) => {
     if (!chiTietDonHang) {
       return res.status(404).json({ error: "Không tìm thấy đơn hàng" });
     }
-    res.json(chiTietDonHang);
+    res.json({
+      ...chiTietDonHang.toObject(),
+      deliveryFee: chiTietDonHang.deliveryFee || 0, // Thêm phí giao hàng
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
@@ -103,19 +109,24 @@ exports.getChiTiet = async (req, res) => {
 exports.getHistory = async (req, res) => {
   try {
     const history = await historyModel.History.find();
-    res.status(200).json(history);
+    res.status(200).json(
+      history.map((order) => ({
+        ...order.toObject(),
+        deliveryFee: order.deliveryFee || 0, // Thêm phí giao hàng
+      }))
+    );
   } catch (error) {
     return res.status(500).json({ msg: error.message });
   }
 };
 
 exports.getUserHistory = async (req, res) => {
-  console.log("fdscbg", req.body);
   try {
     const userId = req.params.userId;
     if (!userId || userId.length !== 24) {
       return res.status(400).json({ msg: "ID người dùng không hợp lệ" });
     }
+
     const userHistory = await historyModel.History.find({ userId });
 
     if (!userHistory || userHistory.length === 0) {
@@ -123,7 +134,13 @@ exports.getUserHistory = async (req, res) => {
         .status(404)
         .json({ msg: "Không tìm thấy lịch sử mua hàng cho người dùng này" });
     }
-    res.json(userHistory);
+
+    res.json(
+      userHistory.map((order) => ({
+        ...order.toObject(),
+        deliveryFee: order.deliveryFee || 0, // Thêm phí giao hàng
+      }))
+    );
   } catch (error) {
     console.error("Lỗi khi truy vấn lịch sử mua hàng:", error);
     return res.status(500).json({ msg: "Lỗi máy chủ nội bộ" });
@@ -418,26 +435,26 @@ exports.getRevenueRestaurant = async (req, res, next) => {
     console.log("data", billsToday);
     res.render("revenue/showrevenue", {
       req: req,
-  bills: billsToday,
-  billsThisMonth: billsThisMonth,
-  billsThisYear: billsThisYear,
-  userIdsToday: userIdsToday,
-  userIdsThisMonth: userIdsThisMonth,
-  userIdsThisYear: userIdsThisYear,
-  totalRevenueToday: totalRevenueToday,
-  totalRevenueThisMonth: totalRevenueThisMonth,
-  totalRevenueThisYear: totalRevenueThisYear,
+      bills: billsToday,
+      billsThisMonth: billsThisMonth,
+      billsThisYear: billsThisYear,
+      userIdsToday: userIdsToday,
+      userIdsThisMonth: userIdsThisMonth,
+      userIdsThisYear: userIdsThisYear,
+      totalRevenueToday: totalRevenueToday,
+      totalRevenueThisMonth: totalRevenueThisMonth,
+      totalRevenueThisYear: totalRevenueThisYear,
 
-  categoriesToday: dataForChartToday.categories,
-  dataToday: dataForChartToday.data,
-  revenueToday: dataForChartToday.revenue,
+      categoriesToday: dataForChartToday.categories,
+      dataToday: dataForChartToday.data,
+      revenueToday: dataForChartToday.revenue,
 
-  categoriesMonth: dataForChartMonth.categories,
-  dataMonth: dataForChartMonth.data,
-  revenueMonth: dataForChartMonth.revenue,
-  
-  topSelling: topSelling(bills, restaurantId),
-  recent: await recent(bills, restaurantId),
+      categoriesMonth: dataForChartMonth.categories,
+      dataMonth: dataForChartMonth.data,
+      revenueMonth: dataForChartMonth.revenue,
+
+      topSelling: topSelling(bills, restaurantId),
+      recent: await recent(bills, restaurantId),
     });
   } catch (error) {
     console.error("Lỗi khi lấy dữ liệu từ bảng Bill:", error);
