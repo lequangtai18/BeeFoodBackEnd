@@ -975,3 +975,38 @@ exports.getTotalRevenueByDateRange = async (req, res) => {
     res.status(500).json({ msg: "Lỗi máy chủ nội bộ." });
   }
 };
+
+exports.getOrdersByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Kiểm tra xem `userId` có hợp lệ không
+    if (!userId || userId.length !== 24) {
+      return res.status(400).json({ msg: "ID người dùng không hợp lệ" });
+    }
+
+    // Truy vấn lịch sử đơn hàng của người dùng
+    const userOrders = await historyModel.History.find({ userId })
+      .populate({
+        path: "products.productId",
+        select: "name price image", // Lấy các trường cần thiết từ sản phẩm
+      })
+      .populate({
+        path: "products.restaurantId",
+        select: "name address", // Lấy thông tin nhà hàng
+      });
+
+    if (!userOrders || userOrders.length === 0) {
+      return res
+        .status(404)
+        .json({ msg: "Không tìm thấy lịch sử đơn hàng cho người dùng này" });
+    }
+
+    // Trả về dữ liệu
+    res.status(200).json(userOrders);
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách đơn hàng của người dùng:", error);
+    return res.status(500).json({ msg: "Lỗi máy chủ nội bộ." });
+  }
+};
+

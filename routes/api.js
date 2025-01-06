@@ -245,6 +245,7 @@ router.post('/admin/revenue-all-branches', apiHistory.getTotalRevenueByDateRange
 router.get('/getCoordinates/:id', apiRestaurant.getCoordinatesByRestaurantId);
 
 router.get("/recent-purchases", apiHistory.getRevenueRestaurant)
+router.get("/orders/getOrdersByUser/:userId",apiHistory.getOrdersByUser)
 
 // router.get("recent-purchases", async(req, res) => {
 //   try {
