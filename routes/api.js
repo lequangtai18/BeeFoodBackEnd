@@ -51,6 +51,8 @@ router.get(
   apiVoucher.getVoucherInRestaurant
 );
 router.post("/voucher/huydonhang", apiVoucher.huyDonHang);
+router.post("/voucher/toggle/:id", apiVoucher.toggleVoucher);
+// Định nghĩa route áp dụng voucher
 router.get("/voucher/getVoucher", apiVoucher.getVoucher);
 router.post("/voucher/delete/:id", apiVoucher.deleteVoucher);
 router.post("/voucher/decrease", apiVoucher.handleDecreseVoucher);

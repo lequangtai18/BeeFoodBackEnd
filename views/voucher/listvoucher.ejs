@@ -43,23 +43,21 @@
 
             <td>
               <div class="action">
-                <a href="#">
-                  <button>
-                    <span
-                      data-bs-toggle="modal"
-                      data-id="<%= list[i]._id %>"
-                      data-bs-target="#myModal"
-                      class="delete button"
-                    >
-                     Xoa
-                  </button>
-                </a>
-
+                <button
+                  data-bs-toggle="modal"
+                  data-id="<%= list[i]._id %>"
+                  data-status="<%= list[i].isHide %>"
+                  data-bs-target="#myModal"
+                  class="toggle-status"
+                >
+                  <%= list[i].isHide ? 'Khôi phục' : 'Ngừng sử dụng' %>
+                </button>
                 <a href="editVoucher/<%= list[i]._id %>">
-                  <button><span class="update button">Sửa</span></button>
+                  <button class="update-button">Sửa</button>
                 </a>
               </div>
             </td>
+            
           </tr>
           <% } %>
         </tbody>
@@ -69,31 +67,24 @@
           <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-              <h4 class="modal-title">Xóa voucher</h4>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-              ></button>
+              <h4 class="modal-title">Xác nhận thay đổi trạng thái</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-              Bạn Có Chắc Chắn Muốn Xóa voucher này không ?
+              Bạn có chắc chắn muốn <span id="action-text">ngừng sử dụng</span> voucher này không?
             </div>
             <div class="modal-footer">
-              <button id="delete-btn" type="button" class="btn btn-success">
+              <button id="toggle-btn" type="button" class="btn btn-success">
                 Đồng Ý
               </button>
-              <button
-                type="button"
-                class="btn btn-danger"
-                data-bs-dismiss="modal"
-              >
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                 Hủy Bỏ
               </button>
             </div>
           </div>
         </div>
       </div>
+      
       <form
         method="POST"
         name="delete-product-form"
@@ -104,18 +95,30 @@
     <%- include('../inc/footer.ejs') %>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        var voucherId;
-        var deleteForm = document.forms["delete-product-form"];
-        $("#myModal").on("show.bs.modal", function (event) {
-          var button = $(event.relatedTarget);
-          voucherId = button.data("id");
-        });
-        var btnDelete = document.getElementById("delete-btn");
-        btnDelete.onclick = function () {
-          deleteForm.action = "api/voucher/delete/" + voucherId;
-          deleteForm.submit();
-        };
-      });
+  let voucherId, currentStatus;
+  const toggleForm = document.forms["delete-product-form"];
+  const modal = document.getElementById("myModal");
+  const actionText = document.getElementById("action-text");
+
+  // Xử lý sự kiện khi modal hiển thị
+  modal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+    voucherId = button.getAttribute("data-id");
+    currentStatus = button.getAttribute("data-status") === "true";
+
+    // Cập nhật nội dung hành động trong modal
+    actionText.textContent = currentStatus ? "khôi phục" : "ngừng sử dụng";
+  });
+
+  // Xử lý khi nhấn nút "Đồng Ý"
+  const btnToggle = document.getElementById("toggle-btn");
+  btnToggle.onclick = function () {
+    toggleForm.action = "api/voucher/toggle/" + voucherId;
+    toggleForm.submit();
+  };
+});
+
+
     </script>
   </body>
 </html>
