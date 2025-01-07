@@ -9,6 +9,8 @@ const { History } = require("../models/history.js");
 
 const moment = require("moment");
 const { restaurantModel } = require("../models/restaurant.model.js");
+const { notifyModel } = require("../models/notify.model.js");
+const Notify = require("../models/notify.model.js"); // Import mô hình Notify
 exports.createOrderSuccess = async (req, res, next) => {
   try {
     const date = new Date();
@@ -19,17 +21,27 @@ exports.createOrderSuccess = async (req, res, next) => {
       time: date,
     });
     const voucherId = req.body.voucherId;
-    apiNotify.postNotify(req, res);
+
+    // Lưu đơn hàng thành công
+    const new_OrderSuccess = await OrderSuccess.save();
+
+    // Tạo thông báo liên kết với đơn hàng mới
+    await Notify.create({
+      idUser: req.body.userId,
+      orderId: new_OrderSuccess._id,
+      money: req.body.toltalprice,
+      status: 0, // Trạng thái ban đầu của đơn hàng
+    });
+
+    // Xử lý voucher nếu có
     if (voucherId && voucherId !== "") {
       const data = await apiVoucher.handleDecreseVoucher(req, res, next);
       if (data == 1) {
-        let new_OrderSuccess = await OrderSuccess.save();
         return res.status(200).json({ OrderSuccess: new_OrderSuccess });
       } else {
-        return res.status(500).json({ err: "Co loi xay ra" });
+        return res.status(500).json({ err: "Có lỗi xảy ra" });
       }
     } else {
-      let new_OrderSuccess = await OrderSuccess.save();
       return res.status(200).json({ OrderSuccess: new_OrderSuccess });
     }
   } catch (error) {
@@ -183,6 +195,8 @@ exports.getOrdersByRestaurant = async (req, res) => {
   }
 };
 
+// controllers/historyOrderController.js
+
 exports.updateOrderStatusByRestaurant = async (req, res) => {
   const orderId = req.params.orderId;
   const newStatus = req.body.status;
@@ -204,16 +218,25 @@ exports.updateOrderStatusByRestaurant = async (req, res) => {
         statusMessage = "Đã xác nhận";
         break;
       case 2:
-        statusMessage = "Đơn hàng đang giao.";
+        statusMessage = "Đang giao";
         break;
       case 3:
-        statusMessage = "Đơn hàng đã giao.";
+        statusMessage = "Đã giao";
+        break;
       case 4:
-        statusMessage = "Đơn hàng đã được hủy.";
+        statusMessage = "Đã huỷ";
         break;
       default:
-        statusMessage = "Chờ xác nhận.";
+        statusMessage = "Chờ xác nhận";
     }
+
+    // Tạo thông báo cho người dùng khi trạng thái đơn hàng thay đổi
+    await Notify.create({
+      idUser: updatedOrder.userId, // Giả sử `userId` là trường trong đơn hàng
+      orderId: updatedOrder._id,
+      money: updatedOrder.toltalprice,
+      status: newStatus,
+    });
 
     res.json({ msg: statusMessage });
   } catch (error) {
@@ -226,6 +249,7 @@ exports.updateOrderStatusByRestaurant = async (req, res) => {
     res.status(500).json({ msg: "Đã xảy ra lỗi" });
   }
 };
+
 
 exports.cancelOrder = async (req, res) => {
   try {
@@ -1009,4 +1033,58 @@ exports.getOrdersByUser = async (req, res) => {
     return res.status(500).json({ msg: "Lỗi máy chủ nội bộ." });
   }
 };
+
+
+exports.getFilteredOrders = async (req, res) => {
+  try {
+    // Lấy các tham số từ query
+    // Ví dụ: /api/orders/filter?startDate=2025-01-01&endDate=2025-01-07
+    const { startDate, endDate } = req.query;
+
+    // Chuẩn bị object filter
+    const filter = {};
+
+    // Nếu startDate, endDate được truyền lên thì lọc theo khoảng ngày
+    if (startDate || endDate) {
+      filter.time = {};
+      if (startDate) {
+        filter.time.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        // Tạo một ngày ngay sau endDate
+        const endNextDay = new Date(endDate);
+        endNextDay.setDate(endNextDay.getDate() + 1);
+        filter.time.$lt = endNextDay;
+      }
+    }
+
+    // Bạn có thể thêm các điều kiện lọc khác tại đây
+    // Ví dụ filter.status = 3, hay filter.userId = ...
+    filter.status = 3; // Lấy đơn hàng status=3 (hoàn thành) chẳng hạn.
+
+    console.log("Filter conditions:", filter);
+
+    // Truy vấn từ DB
+    const orders = await historyModel.History.find(filter)
+      .populate({
+        path: "userId",          // userId là trường trong historyModel
+        select: "username",      // Lấy trường username (và các trường khác nếu cần)
+      })
+      // .populate({ ... nếu muốn populate thêm fields khác ... })
+      .exec();
+
+    if (!orders || orders.length === 0) {
+      return res
+        .status(404)
+        .json({ msg: "Không tìm thấy đơn hàng nào với điều kiện lọc." });
+    }
+
+    // Trả về mảng đơn hàng
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Lỗi khi lọc đơn hàng:", error);
+    res.status(500).json({ msg: "Lỗi máy chủ nội bộ" });
+  }
+};
+
 

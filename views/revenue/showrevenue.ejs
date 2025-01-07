@@ -65,6 +65,34 @@
               </div>
             </div>
             <!-- End Sales Card -->
+            <!-- Modal xem chi tiết đơn hàng -->
+            <div class="modal fade" id="ordersModal" tabindex="-1" aria-labelledby="ordersModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="ordersModalLabel">Danh sách đơn hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <table class="table" id="ordersTable">
+                      <thead>
+                        <tr>
+                          <th>Mã đơn hàng</th>
+                          <th>Tên khách hàng</th>
+                          <th>Ngày đặt hàng</th>
+                          <th>Tổng tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!-- Dữ liệu đơn hàng sẽ được thêm vào bằng JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
 
             <!-- Revenue Card -->
             <div class="col-xxl-6 col-xl-12">
@@ -660,4 +688,86 @@
       });
     });
   </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const billsCountElement = document.getElementById("billsCount");
+
+      // Lắng nghe sự kiện click vào số đơn hàng
+      billsCountElement.addEventListener("click", async () => {
+        try {
+          // Lấy giá trị startDate, endDate
+          const startDate = document.getElementById("startDate").value;
+          const endDate = document.getElementById("endDate").value;
+
+          // Xây URL kèm query
+          const url = `/api/orders/filter?startDate=${startDate}&endDate=${endDate}`;
+
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error("Không thể lấy danh sách đơn hàng. Mã lỗi: " + response.status);
+          }
+          const orders = await response.json();
+          console.log('Fetched orders:', orders);
+
+          renderOrdersToTable(orders);
+
+          const ordersModal = new bootstrap.Modal(document.getElementById("ordersModal"));
+          ordersModal.show();
+        } catch (error) {
+          console.error("Lỗi khi lấy danh sách đơn hàng:", error);
+          alert("Không thể lấy danh sách đơn hàng, vui lòng thử lại.");
+        }
+      });
+    });
+
+
+    /**
+     * Hàm hiển thị danh sách đơn hàng vào bảng
+     * @param {Array} orders - Mảng các object đơn hàng
+     */
+    function renderOrdersToTable(orders) {
+      const tableBody = document.querySelector("#ordersTable tbody");
+      // Xóa dữ liệu cũ
+      tableBody.innerHTML = "";
+
+      // Trường hợp không có đơn hàng nào
+      if (!Array.isArray(orders) || orders.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="text-center">Không có đơn hàng nào</td>
+          </tr>
+        `;
+        return;
+      }
+
+      // Duyệt mảng đơn hàng, hiển thị từng dòng
+      orders.forEach((order) => {
+        const tr = document.createElement("tr");
+
+        const tdId = document.createElement("td");
+        tdId.textContent = order._id;
+        tr.appendChild(tdId);
+
+        const tdCustomerName = document.createElement("td");
+        tdCustomerName.textContent = order.userId.username ;
+        tr.appendChild(tdCustomerName);
+
+        const tdOrderDate = document.createElement("td");
+        const dateValue = order.time ? new Date(order.time) : null;
+        tdOrderDate.textContent = dateValue
+          ? dateValue.toLocaleString("vi-VN")
+          : "(Chưa có ngày)";
+        tr.appendChild(tdOrderDate);
+
+        const tdTotal = document.createElement("td");
+        const price = order.toltalprice || 0;  // phòng trường hợp null/undefined
+        tdTotal.textContent = price.toLocaleString() + " VNĐ";
+        tr.appendChild(tdTotal);
+
+        tableBody.appendChild(tr);
+      });
+    }
+  </script>
+
+
   <%- include('../inc/footer.ejs') %>

@@ -249,6 +249,7 @@ router.get('/getCoordinates/:id', apiRestaurant.getCoordinatesByRestaurantId);
 router.get("/recent-purchases", apiHistory.getRevenueRestaurant)
 router.get("/orders/getOrdersByUser/:userId",apiHistory.getOrdersByUser)
 router.put('/comment/update/:id', apiComment.updateComment);
+router.get("/orders/filter", apiHistory.getFilteredOrders);
 
 // router.get("recent-purchases", async(req, res) => {
 //   try {
