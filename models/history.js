@@ -7,6 +7,7 @@ const historySchame = new mongoose.Schema(
     userId: {
       type: String,
       require: true,
+      ref: "userModel"
     },
 
     address: {

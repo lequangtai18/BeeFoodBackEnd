@@ -1034,3 +1034,57 @@ exports.getOrdersByUser = async (req, res) => {
   }
 };
 
+
+exports.getFilteredOrders = async (req, res) => {
+  try {
+    // Lấy các tham số từ query
+    // Ví dụ: /api/orders/filter?startDate=2025-01-01&endDate=2025-01-07
+    const { startDate, endDate } = req.query;
+
+    // Chuẩn bị object filter
+    const filter = {};
+
+    // Nếu startDate, endDate được truyền lên thì lọc theo khoảng ngày
+    if (startDate || endDate) {
+      filter.time = {};
+      if (startDate) {
+        filter.time.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        // Tạo một ngày ngay sau endDate
+        const endNextDay = new Date(endDate);
+        endNextDay.setDate(endNextDay.getDate() + 1);
+        filter.time.$lt = endNextDay;
+      }
+    }
+
+    // Bạn có thể thêm các điều kiện lọc khác tại đây
+    // Ví dụ filter.status = 3, hay filter.userId = ...
+    filter.status = 3; // Lấy đơn hàng status=3 (hoàn thành) chẳng hạn.
+
+    console.log("Filter conditions:", filter);
+
+    // Truy vấn từ DB
+    const orders = await historyModel.History.find(filter)
+      .populate({
+        path: "userId",          // userId là trường trong historyModel
+        select: "username",      // Lấy trường username (và các trường khác nếu cần)
+      })
+      // .populate({ ... nếu muốn populate thêm fields khác ... })
+      .exec();
+
+    if (!orders || orders.length === 0) {
+      return res
+        .status(404)
+        .json({ msg: "Không tìm thấy đơn hàng nào với điều kiện lọc." });
+    }
+
+    // Trả về mảng đơn hàng
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Lỗi khi lọc đơn hàng:", error);
+    res.status(500).json({ msg: "Lỗi máy chủ nội bộ" });
+  }
+};
+
+
