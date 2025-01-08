@@ -51,6 +51,8 @@ router.get(
   apiVoucher.getVoucherInRestaurant
 );
 router.post("/voucher/huydonhang", apiVoucher.huyDonHang);
+router.post("/voucher/toggle/:id", apiVoucher.toggleVoucher);
+// Định nghĩa route áp dụng voucher
 router.get("/voucher/getVoucher", apiVoucher.getVoucher);
 router.post("/voucher/delete/:id", apiVoucher.ngungkinhdoanhVoucher);
 
@@ -248,7 +250,10 @@ router.post('/admin/revenue-all-branches', apiHistory.getTotalRevenueByDateRange
 
 router.get('/getCoordinates/:id', apiRestaurant.getCoordinatesByRestaurantId);
 
-// router.get("recent-purchses", apishowapishow)
+router.get("/recent-purchases", apiHistory.getRevenueRestaurant)
+router.get("/orders/getOrdersByUser/:userId",apiHistory.getOrdersByUser)
+router.put('/comment/update/:id', apiComment.updateComment);
+router.get("/orders/filter", apiHistory.getFilteredOrders);
 
 // router.get("recent-purchases", async(req, res) => {
 //   try {

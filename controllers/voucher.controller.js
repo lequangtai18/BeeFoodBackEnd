@@ -10,12 +10,14 @@ exports.getVoucher = async (req, res, next) => {
     const list = await voucherModel.voucherModel.find({
       restaurantId: id,
       hsd: { $gte: currentTime.toISOString() },
+
     });
     return list;
   } catch (error) {
     return res.status(500).json({ msg: error.message });
   }
 };
+
 exports.huyDonHang = async (req, res, next) => {
   const userId = req.body.userId;
   const voucherId = req.body.voucherId;
@@ -52,12 +54,12 @@ exports.decrease = async (req, res, next) => {
 };
 exports.getVoucherInRestaurant = async (req, res, next) => {
   const id = req.params.id;
-  console.log("data id", id);
   try {
     const currentTime = moment();
     const list = await voucherModel.voucherModel.find({
       restaurantId: id,
       hsd: { $gte: currentTime.toISOString() },
+      isHide: false, // Chỉ lấy voucher không bị ẩn
     });
     return res.json({
       list: list,
@@ -66,6 +68,23 @@ exports.getVoucherInRestaurant = async (req, res, next) => {
     return res.status(500).json({ msg: error.message });
   }
 };
+
+
+exports.toggleVoucher = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const voucher = await voucherModel.voucherModel.findById(id);
+    if (!voucher) {
+      return res.status(204).json({ msg: "Voucher không tồn tại" });
+    }
+    voucher.isHide = !voucher.isHide; // Đổi trạng thái
+    await voucher.save();
+    res.redirect("/listvoucher");
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
+};
+
 
 // exports.huyDonHang = (req, res, next) => {};
 

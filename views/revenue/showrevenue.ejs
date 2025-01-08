@@ -65,6 +65,39 @@
               </div>
             </div>
             <!-- End Sales Card -->
+            <!-- Modal xem chi tiết đơn hàng -->
+            <div class="modal fade" id="ordersModal" tabindex="-1" aria-labelledby="ordersModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="ordersModalLabel">Danh sách đơn hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <table class="table" id="ordersTable">
+                      <thead>
+                        <tr>
+                          <th>Mã đơn hàng</th>
+                          <th>Tên khách hàng</th>
+                          <th>Ngày đặt hàng</th>
+                          <th>Tên sản phẩm</th>
+                          <th>Số lượng</th>
+                          <th>Đơn giá</th>
+                          <th>voucher</th>
+                          <th>Ship</th>
+                          <th>Tổng tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!-- Dữ liệu đơn hàng sẽ được thêm vào bằng JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
 
             <!-- Revenue Card -->
             <div class="col-xxl-6 col-xl-12">
@@ -129,56 +162,56 @@
               </div>
             </div>
 
-             <!-- Top Selling -->
-          <div class="col-12">
-            <div class="card top-selling overflow-auto">
-              <div class="card-body pb-0">
-                <h5 class="card-title">Top Selling</h5>
+            <!-- Top Selling -->
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Top Selling</h5>
 
-                <table class="table table-borderless">
-                  <thead>
-                    <tr>
-                      <th scope="col" class="sortable">Ảnh</th>
-                      <th scope="col" class="sortable">Tên sản phẩm</th>
-                      <th scope="col" class="sortable" data-sort="number">
-                        Giá
-                      </th>
-                      <th scope="col" class="sortable" data-sort="number" style="text-align: center">
-                        Đã bán
-                      </th>
-                      <th scope="col" class="sortable" data-sort="number" style="text-align: right">
-                        Doanh thu
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% for (let i=0; i < topSelling.length; i++) { %>
+                  <table class="table table-borderless">
+                    <thead>
                       <tr>
-                        <td>
-                          <img src="<%= topSelling[i].imageURL %>" alt="<%= topSelling[i].name %>"
-                            style="max-width: 50px" />
-                        </td>
-                        <td>
-                          <%= topSelling[i].name %>
-                        </td>
-                        <td>
-                          <%= topSelling[i].price %>
-                        </td>
-                        <td style="text-align: center">
-                          <%= topSelling[i].quantity %>
-                        </td>
-                        <td style="text-align: right">
-                          <%= topSelling[i].totalRevenue %>
-                        </td>
+                        <th scope="col" class="sortable">Ảnh</th>
+                        <th scope="col" class="sortable">Tên sản phẩm</th>
+                        <th scope="col" class="sortable" data-sort="number">
+                          Giá
+                        </th>
+                        <th scope="col" class="sortable" data-sort="number" style="text-align: center">
+                          Đã bán
+                        </th>
+                        <th scope="col" class="sortable" data-sort="number" style="text-align: right">
+                          Doanh thu
+                        </th>
                       </tr>
-                      <% } %>
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      <% for (let i=0; i < topSelling.length; i++) { %>
+                        <tr>
+                          <td>
+                            <img src="<%= topSelling[i].imageURL %>" alt="<%= topSelling[i].name %>"
+                              style="max-width: 50px" />
+                          </td>
+                          <td>
+                            <%= topSelling[i].name %>
+                          </td>
+                          <td>
+                            <%= topSelling[i].price %>
+                          </td>
+                          <td style="text-align: center">
+                            <%= topSelling[i].quantity %>
+                          </td>
+                          <td style="text-align: right">
+                            <%= topSelling[i].totalRevenue %>
+                          </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
-          <!-- End Top Selling -->
-           
+            <!-- End Top Selling -->
+
           </div>
         </div>
 
@@ -187,7 +220,7 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Hoạt động gần đây</h5>
-  
+
               <div class="activity">
                 <% for (let i=0; i < recent.length; i++) { %>
                   <div class="activity-item d-flex">
@@ -201,18 +234,18 @@
                     </div>
                   </div>
                   <% } %>
-  
+
                     <!-- End activity item-->
               </div>
             </div>
           </div>
           <!-- End Recent Activity -->
-  
+
           <!-- News & Updates Traffic -->
           <div class="card">
             <div class="card-body pb-0">
               <h5 class="card-title">Thông tin</h5>
-  
+
               <div class="news">
                 <div class="post-item clearfix">
                   <img
@@ -228,7 +261,7 @@
                     Chiến thắng ngược 2-1 trước Brentford giúp Aston Villa tăng...
                   </p>
                 </div>
-  
+
                 <div class="post-item clearfix">
                   <img
                     src="https://i1-thethao.vnecdn.net/2023/12/18/464qrq5xubmppbieconxklowme-170-6976-9929-1702840564.jpg?w=380&h=228&q=100&dpr=1&fit=crop&s=9p0aDt3JsmEwupTMSyZ1jw"
@@ -242,7 +275,7 @@
                     được một điểm từ trận
                   </p>
                 </div>
-  
+
                 <div class="post-item clearfix">
                   <img
                     src="https://i1-vnexpress.vnecdn.net/2023/12/17/anh-chup-man-hinh-2023-12-17-l-2946-8241-1702803706.png?w=220&h=132&q=100&dpr=1&fit=crop&s=Jlur_MTExeLwgvgvTOunwQ"
@@ -256,7 +289,7 @@
                     miền
                   </p>
                 </div>
-  
+
                 <div class="post-item clearfix">
                   <img
                     src="https://i1-vnexpress.vnecdn.net/2023/12/17/tongthongputin8470jpgwebp-1702-4014-9733-1702822405.jpg?w=220&h=132&q=100&dpr=1&fit=crop&s=FNpVRFsy-u4qMkEhOGe81g"
@@ -270,7 +303,7 @@
                     năng tự chủ nhằm đối phó những áp lực từ phương Tây.
                   </p>
                 </div>
-  
+
                 <div class="post-item clearfix">
                   <img
                     src="https://i1-thethao.vnecdn.net/2023/12/17/A1-jpeg-4843-1702822493.jpg?w=1020&h=0&q=100&dpr=1&fit=crop&s=hU8meFhx4amBUHZeKkGrZw"
@@ -387,43 +420,54 @@
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const response = await fetch("/api/admin/get-branches");
-    if (!response.ok) {
-      throw new Error("Không thể tải hoạt động gần đây.");
-    }
+      try {
+        const response = await fetch("/api/recent-purchases");
+        if (!response.ok) {
+          throw new Error("Không thể tải hoạt động gần đây. Mã lỗi: " + response.status);
+        }
 
-    const recentPurchases = await response.json();
-    
-    const activityContainer = document.querySelector(".activity");
-    activityContainer.innerHTML = "";  // Xóa dữ liệu cũ trước khi thêm mới
+        const recentPurchases = await response.json();
+        console.log("Dữ liệu hoạt động gần đây:", recentPurchases);
 
-    recentPurchases.forEach(purchase => {
-      const activityItem = document.createElement("div");
-      activityItem.classList.add("activity-item", "d-flex");
+        if (!Array.isArray(recentPurchases)) {
+          throw new Error("Dữ liệu nhận được không phải là mảng.");
+        }
 
-      const activityLabel = document.createElement("div");
-      activityLabel.classList.add("activite-label");
-      activityLabel.textContent = purchase.time;
+        const activityContainer = document.querySelector(".activity");
+        activityContainer.innerHTML = "";  // Xóa dữ liệu cũ trước khi thêm mới
 
-      const activityBadge = document.createElement("i");
-      activityBadge.classList.add("bi", "bi-circle-fill", "activity-badge", "text-success", "align-self-start");
+        recentPurchases.forEach(purchase => {
+          // Kiểm tra xem các trường dữ liệu có tồn tại không
+          if (!purchase.time || !purchase.userName || !purchase.productName) {
+            console.warn("Dữ liệu không đầy đủ cho purchase:", purchase);
+            return;
+          }
 
-      const activityContent = document.createElement("div");
-      activityContent.classList.add("activity-content");
-      activityContent.textContent = `${purchase.userName} đã mua ${purchase.productName} tại nhà hàng`;
+          const activityItem = document.createElement("div");
+          activityItem.classList.add("activity-item", "d-flex");
 
-      activityItem.appendChild(activityLabel);
-      activityItem.appendChild(activityBadge);
-      activityItem.appendChild(activityContent);
+          const activityLabel = document.createElement("div");
+          activityLabel.classList.add("activity-label"); // Sửa lỗi chính tả ở đây
+          activityLabel.textContent = purchase.time;
 
-      activityContainer.appendChild(activityItem);
+          const activityBadge = document.createElement("i");
+          activityBadge.classList.add("bi", "bi-circle-fill", "activity-badge", "text-success", "align-self-start");
+
+          const activityContent = document.createElement("div");
+          activityContent.classList.add("activity-content");
+          activityContent.textContent = `${purchase.userName} đã mua ${purchase.productName} tại nhà hàng`;
+
+          activityItem.appendChild(activityLabel);
+          activityItem.appendChild(activityBadge);
+          activityItem.appendChild(activityContent);
+
+          activityContainer.appendChild(activityItem);
+        });
+      } catch (error) {
+        console.error("Lỗi khi tải hoạt động gần đây:", error);
+      }
     });
-  } catch (error) {
-    console.error(error);
-    alert("Không thể tải hoạt động mua gần đây.");
-  }
-});
+
 
     // Xử lý sự kiện lọc theo khoảng ngày
     document
@@ -464,7 +508,7 @@
 
 
   <script>
-    
+
     function updateCardData(filter, billsCount) {
       // Đặt nội dung của thẻ title
       document.getElementById("filterSpan").innerText = `| ${filter}`;
@@ -649,4 +693,200 @@
       });
     });
   </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const billsCountElement = document.getElementById("billsCount");
+
+      // Lắng nghe sự kiện click vào số đơn hàng
+      billsCountElement.addEventListener("click", async () => {
+        try {
+          // Lấy giá trị startDate, endDate
+          const startDate = document.getElementById("startDate").value;
+          const endDate = document.getElementById("endDate").value;
+
+          // Xây URL kèm query
+          const url = `/api/orders/filter?startDate=${startDate}&endDate=${endDate}`;
+
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error("Không thể lấy danh sách đơn hàng. Mã lỗi: " + response.status);
+          }
+          const orders = await response.json();
+          console.log('Fetched orders:', orders);
+
+          renderOrdersToTable(orders);
+
+          const ordersModal = new bootstrap.Modal(document.getElementById("ordersModal"));
+          ordersModal.show();
+        } catch (error) {
+          console.error("Lỗi khi lấy danh sách đơn hàng:", error);
+          alert("Không thể lấy danh sách đơn hàng, vui lòng thử lại.");
+        }
+      });
+    });
+
+
+    /**
+     * Hàm hiển thị danh sách đơn hàng vào bảng
+     * @param {Array} orders - Mảng các object đơn hàng
+     */
+    function renderOrdersToTable(orders) {
+      const tableBody = document.querySelector("#ordersTable tbody");
+      // Xóa dữ liệu cũ
+      tableBody.innerHTML = "";
+
+      // Trường hợp không có đơn hàng nào
+      if (!Array.isArray(orders) || orders.length === 0) {
+        tableBody.innerHTML = `
+      <tr>
+        <td colspan="9" class="text-center">Không có đơn hàng nào</td>
+      </tr>
+    `;
+        return;
+      }
+
+      // Duyệt mảng đơn hàng, hiển thị từng dòng
+      orders.forEach((order) => {
+        const { _id, userId, time, products, deliveryFee, toltalprice, voucherId } = order;
+
+        // Kiểm tra xem đơn hàng có sản phẩm hay không
+        if (Array.isArray(products) && products.length > 0) {
+          products.forEach((product, index) => {
+            const tr = document.createElement("tr");
+
+            // 1. Mã đơn hàng
+            const tdId = document.createElement("td");
+            tdId.textContent = _id;
+            tr.appendChild(tdId);
+
+            // 2. Tên khách hàng
+            const tdCustomerName = document.createElement("td");
+            tdCustomerName.textContent = userId?.username || "(Chưa có tên)";
+            tr.appendChild(tdCustomerName);
+
+            // 3. Ngày đặt hàng
+            const tdOrderDate = document.createElement("td");
+            const dateValue = time ? new Date(time) : null;
+            tdOrderDate.textContent = dateValue
+              ? dateValue.toLocaleString("vi-VN")
+              : "(Chưa có ngày)";
+            tr.appendChild(tdOrderDate);
+
+            // 4. Tên sản phẩm
+            const tdProductName = document.createElement("td");
+            tdProductName.textContent = product.name || "(Không có sản phẩm)";
+            tr.appendChild(tdProductName);
+
+            // 5. Số lượng
+            const tdQuantity = document.createElement("td");
+            tdQuantity.textContent = product.quantity || 0;
+            tr.appendChild(tdQuantity);
+
+            // 6. Đơn giá
+            const tdUnitPrice = document.createElement("td");
+            const unitPrice = product.price || 0;
+            tdUnitPrice.textContent = unitPrice.toLocaleString() + " VNĐ";
+            tr.appendChild(tdUnitPrice);
+
+            // 7. Voucher (Giá tiền giảm)
+            if (index === 0) {
+              const tdVoucher = document.createElement("td");
+              if (voucherId && voucherId.money) {
+                tdVoucher.textContent = ` ${voucherId.money.toLocaleString()} VNĐ`;
+              } else {
+                tdVoucher.textContent = "Không áp dụng";
+              }
+              tr.appendChild(tdVoucher);
+            } else {
+              // Các dòng sau để trống cột Voucher
+              tr.appendChild(document.createElement("td"));
+            }
+
+
+            // 6. Ship (phí vận chuyển)
+            if (index === 0) {
+              const tdShip = document.createElement("td");
+              tdShip.textContent = (deliveryFee || 0).toLocaleString() + " VNĐ";
+              tr.appendChild(tdShip);
+            } else {
+              // Các dòng sau để trống cột Ship
+              const tdShipEmpty = document.createElement("td");
+              tr.appendChild(tdShipEmpty);
+            }
+
+            // 7. Tổng tiền
+            if (index === 0) {
+              const tdTotal = document.createElement("td");
+              tdTotal.textContent = (toltalprice || 0).toLocaleString() + " VNĐ";
+              tr.appendChild(tdTotal);
+            } else {
+              // Các dòng sau để trống cột Tổng tiền
+              const tdTotalEmpty = document.createElement("td");
+              tr.appendChild(tdTotalEmpty);
+            }
+
+            tableBody.appendChild(tr);
+          });
+        } else {
+          // Trường hợp không có mảng products hoặc rỗng
+          const tr = document.createElement("tr");
+
+          // 1. Mã đơn hàng
+          const tdId = document.createElement("td");
+          tdId.textContent = _id;
+          tr.appendChild(tdId);
+
+          // 2. Tên khách hàng
+          const tdCustomerName = document.createElement("td");
+          tdCustomerName.textContent = userId?.username || "(Chưa có tên)";
+          tr.appendChild(tdCustomerName);
+
+          // 3. Ngày đặt hàng
+          const tdOrderDate = document.createElement("td");
+          const dateValue = time ? new Date(time) : null;
+          tdOrderDate.textContent = dateValue
+            ? dateValue.toLocaleString("vi-VN")
+            : "(Chưa có ngày)";
+          tr.appendChild(tdOrderDate);
+
+          // 4. Tên sản phẩm
+          const tdProductName = document.createElement("td");
+          tdProductName.textContent = "(Không có sản phẩm)";
+          tr.appendChild(tdProductName);
+
+          // 5. Số lượng
+          const tdQuantity = document.createElement("td");
+          tdQuantity.textContent = 0;
+          tr.appendChild(tdQuantity);
+          // 6. Đơn giá
+          const tdUnitPrice = document.createElement("td");
+          tdUnitPrice.textContent = "0 VNĐ";
+          tr.appendChild(tdUnitPrice);
+
+          // 7. Voucher (Giá tiền giảm)
+          const tdVoucher = document.createElement("td");
+          if (voucherId && voucherId.money) {
+            tdVoucher.textContent = ` ${voucherId.money.toLocaleString()} VNĐ`;
+          } else {
+            tdVoucher.textContent = "Không áp dụng";
+          }
+          tr.appendChild(tdVoucher)
+
+          // 6. Ship (phí vận chuyển)
+          const tdShip = document.createElement("td");
+          tdShip.textContent = (deliveryFee || 0).toLocaleString() + " VNĐ";
+          tr.appendChild(tdShip);
+
+          // 7. Tổng tiền
+          const tdTotal = document.createElement("td");
+          tdTotal.textContent = (toltalprice || 0).toLocaleString() + " VNĐ";
+          tr.appendChild(tdTotal);
+
+          tableBody.appendChild(tr);
+        }
+      });
+    }
+  </script>
+
+
   <%- include('../inc/footer.ejs') %>

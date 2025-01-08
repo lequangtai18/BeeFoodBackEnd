@@ -1,57 +1,140 @@
-
 <%- include('../inc/header-user.ejs') %>
-<div style="margin-top: 100px; margin-left: 300px; margin-right: auto; text-align: center;">
-  <div>
+  <style>
+    /* Container styling */
+    .order-details-container {
+      margin-top: 100px;
+      margin-left: 300px;
+      margin-right: auto;
+      text-align: center;
+    }
 
-    <h1 style="font-weight: bold; color: black;">Chi tiết đơn hàng</h1>
-    
-    <div style="border: 1px solid #ccc; padding: 20px; max-width: 1200px; margin: auto; text-align: center; margin-top: 40px;">
-      
-      <% try { %>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th scope="col">Mã đơn hàng</th>
-            <th scope="col">Tên người mua</th>
-            <th scope="col">Số điện thoại</th>
-            <th scope="col">Địa chỉ</th>
-            <th scope="col">Tên sản phẩm</th>
-            <th scope="col">Số lượng</th>
-            <th scope="col">Đơn giá</th>
-            <th scope="col">Ship</th>
-            <th scope="col">Thành tiền</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (let i = 0; i < data.product.length; i++) { %>
-          <tr>
-            <% if (i === 0) { %>
-            <td rowspan="<%= data.product.length %>"><%= data._id %></td>
-            <td rowspan="<%= data.product.length %>"><%= data.username %></td>
-            <td rowspan="<%= data.product.length %>"><%= data.phone %></td>
-            <td rowspan="<%= data.product.length %>"><%= data.address %></td>
-            <% } %>
-            <td><%= data.product[i].name %></td>
-            <td><%= data.product[i].quantity %></td>
-            <td><%= data.product[i].price %></td>
-            <td><%= data.deliveryFee %></td>
-            <td><%= data.product[i].quantity * data.product[i].price + data.deliveryFee %></td>
-          </tr>
-          <% } %>
-        </tbody>
-      </table>
+    /* Title styling */
+    .order-details-title {
+      font-weight: bold;
+      color: black;
+      margin-bottom: 20px;
+    }
 
-      <div style="margin-top: 20px; text-align: right;">
-        <p style="font-weight: bold; color: black; font-size: 17px;"><strong>Tổng cộng:</strong> <%= data.totalPrice %></p>
+    /* Content box styling */
+    .order-details-content {
+      border: 1px solid #ccc;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+      text-align: center;
+      margin-top: 40px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    /* Table styling */
+    .order-details-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .order-details-table th,
+    .order-details-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+      /* Căn giữa theo chiều ngang */
+      vertical-align: middle;
+      /* Căn giữa theo chiều dọc */
+    }
+
+
+    .order-details-table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Total price styling */
+    .order-total {
+      margin-top: 20px;
+      text-align: right;
+      font-size: 17px;
+      font-weight: bold;
+      color: black;
+    }
+
+    /* Error message styling */
+    .error-message {
+      color: red;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+
+  <div class="order-details-container">
+    <div>
+      <h1 class="order-details-title">Chi tiết đơn hàng</h1>
+      <div class="order-details-content">
+        <% try { %>
+          <table class="table table-bordered order-details-table">
+            <thead>
+              <tr>
+                <th scope="col">Mã đơn hàng</th>
+                <th scope="col">Tên người mua</th>
+                <th scope="col">Số điện thoại</th>
+                <th scope="col">Địa chỉ</th>
+                <th scope="col">Tên sản phẩm</th>
+                <th scope="col">Số lượng</th>
+                <th scope="col">Đơn giá</th>
+                <th scope="col">Ship</th>
+                <th scope="col">Thành tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for (let i=0; i < data.product.length; i++) { %>
+                <tr>
+                  <% if (i===0) { %>
+                    <td rowspan="<%= data.product.length %>">
+                      <%= data._id %>
+                    </td>
+                    <td rowspan="<%= data.product.length %>">
+                      <%= data.username %>
+                    </td>
+                    <td rowspan="<%= data.product.length %>">
+                      <%= data.phone %>
+                    </td>
+                    <td rowspan="<%= data.product.length %>">
+                      <%= data.address %>
+                    </td>
+                    <% } %>
+                      <td>
+                        <%= data.product[i].name %>
+                      </td>
+                      <td>
+                        <%= data.product[i].quantity %>
+                      </td>
+                      <td>
+                        <%= data.product[i].price %>
+                      </td>
+                      <% if (i===0) { %>
+                        <td rowspan="<%= data.product.length %>">
+                          <%= data.deliveryFee %>
+                        </td>
+                        <% } %>
+                          <td>
+                            <%= data.product[i].quantity * data.product[i].price + (i===0 ? data.deliveryFee : 0) %>
+                          </td>
+                </tr>
+                <% } %>
+            </tbody>
+          </table>
+          <div class="order-total">
+            <p><strong>Tổng cộng:</strong>
+              <%= data.totalPrice %>
+            </p>
+          </div>
+          <% } catch (error) { %>
+            <p class="error-message">Đã xảy ra lỗi khi tải chi tiết đơn hàng.</p>
+            <% console.error(error); %>
+              <% } %>
       </div>
-      
-      <% } catch (error) { %>
-      <p style="color: red;">Đã xảy ra lỗi khi tải chi tiết đơn hàng.</p>
-      <% console.error(error); %>
-      <% } %>
-
     </div>
   </div>
-</div>
-<%- include('../inc/footer.ejs') %>
-
+  <%- include('../inc/footer.ejs') %>

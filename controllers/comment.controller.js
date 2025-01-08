@@ -46,3 +46,30 @@ exports.postComment = async (req, res, next) => {
     return res.status(500).json({ msg: error.message });
   }
 };
+
+
+exports.updateComment = async (req, res, next) => {
+  const { id } = req.params;
+  const { title } = req.body;
+
+  try {
+    const updatedComment = await commentModel.commentModel.findByIdAndUpdate(
+      id,
+      { title },
+      { new: true, runValidators: true }
+    ).populate({ path: "idUser", select: "username avatar" })
+      .populate({ path: "idProduct", select: "name images _id" });
+
+    if (!updatedComment) {
+      return res.status(404).json({ msg: "Không tìm thấy bình luận" });
+    }
+
+    return res.status(200).json({
+      comment: updatedComment,
+      msg: "Cập nhật bình luận thành công"
+    });
+  } catch (error) {
+    console.error("Lỗi khi cập nhật bình luận:", error);
+    return res.status(500).json({ msg: "Có lỗi xảy ra khi cập nhật bình luận" });
+  }
+};

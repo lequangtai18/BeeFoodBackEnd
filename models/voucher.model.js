@@ -10,6 +10,7 @@ const voucherSchema = new mongoose.Schema(
     image: String,
     limit: Number,
     idUser: [{ type: mongoose.Schema.ObjectId, ref: "userModel" }],
+    isHide: { type: Boolean, default: false }, // Trạng thái voucher
     isHetHan: { type: Boolean, default: false },
     restaurantId: { type: mongoose.Schema.ObjectId, ref: "restaurantModel" },
   },

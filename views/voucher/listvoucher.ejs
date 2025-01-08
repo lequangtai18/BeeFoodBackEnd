@@ -27,49 +27,42 @@
           </tr>
         </thead>
         <tbody>
-          <% for (let i=0; i < list.length; i++) { %>
-            <tr>
-              <th scope="row">
-                <%= i + 1 %>
-              </th>
-              <td>
-                <%= list[i]._id %>
-              </td>
-              <td>
-                <%= list[i].name%>
-              </td>
-              <td>
-                <%= list[i].money %>
-              </td>
-              <td>
-                <%= list[i].limit %>
-              </td>
+          <% for (let i = 0; i < list.length; i++) { %>
+          <tr>
+            <th scope="row"><%= i + 1 %></th>
+            <td><%= list[i]._id %></td>
+            <td><%= list[i].name%></td>
+            <td><%= list[i].money %></td>
+            <td><%= list[i].limit %></td>
 
-              <td>
-                <img src="<%= list[i].image %>" alt="<%= list[i].name %>" style="max-width: 100px" />
-              </td>
-              <td>
-                <%= list[i].quantity %>
-              </td>
+            <td>
+              <img
+                src="<%= list[i].image %>"
+                alt="<%= list[i].name %>"
+                style="max-width: 100px"
+              />
+            </td>
+            <td><%= list[i].quantity %></td>
 
-              <td>
-                <div class="action">
-                  <a href="#">
-                    <button type="button" class="delete button" data-bs-toggle="modal" data-id="<%= list[i]._id %>"
-                      data-bs-target="#myModal">
-                      <%= list[i].isHide ? 'Khôi Phục Lại' : 'Ngừng Kinh Doanh' %>
-                    </button>
-                  </a>
-                  <a href="editProduct/<%= list[i]._id %>">
-                    <button type="button" class="update button">Sửa</button>
-                  </a>
-                </div>
-              </td>
-              <td>
-                <%= list[i].isHide ? 'Ngừng Kinh Doanh' : 'Đang Hoạt Động' %>
-              </td>
-            </tr>
-            <% } %>
+            <td>
+              <div class="action">
+                <button
+                  data-bs-toggle="modal"
+                  data-id="<%= list[i]._id %>"
+                  data-status="<%= list[i].isHide %>"
+                  data-bs-target="#myModal"
+                  class="toggle-status"
+                >
+                  <%= list[i].isHide ? 'Khôi phục' : 'Ngừng sử dụng' %>
+                </button>
+                <a href="editVoucher/<%= list[i]._id %>">
+                  <button class="update-button">Sửa</button>
+                </a>
+              </div>
+            </td>
+            
+          </tr>
+          <% } %>
         </tbody>
       </table>
 
@@ -79,37 +72,59 @@
             <div class="modal-header">
               <h4 class="modal-title">Ngừng Kinh Doanh?</h4>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              <h4 class="modal-title">Xác nhận thay đổi trạng thái</h4>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
               Bạn Có Chắc Chắn Muốn Ngừng Kinh Doanh?
+              Bạn có chắc chắn muốn <span id="action-text">ngừng sử dụng</span> voucher này không?
             </div>
             <div class="modal-footer">
-              <button id="delete-btn" type="button" class="btn btn-success">Đồng Ý</button>
-              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy Bỏ</button>
+              <button id="toggle-btn" type="button" class="btn btn-success">
+                Đồng Ý
+              </button>
+              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                Hủy Bỏ
+              </button>
             </div>
           </div>
         </div>
       </div>
+      
+      <form
+        method="POST"
+        name="delete-product-form"
+        enctype="multipart/form-data"
+      ></form>
+    </div>
 
-      <form method="POST" name="delete-product-form" enctype="multipart/form-data"></form>
-
-      <script>
-        document.addEventListener("DOMContentLoaded", function () {
-          var voucherId;
-          var deleteForm = document.forms["delete-product-form"];
-          $("#myModal").on("show.bs.modal", function (event) {
-            var button = $(event.relatedTarget);
-            voucherId = button.data("id");
-          });
-          var btnDelete = document.getElementById("delete-btn");
-          btnDelete.onclick = function () {
-            deleteForm.action = "api/voucher/delete/" + voucherId;
-            deleteForm.submit();
-          };
-        });
-      </script>
-  
     <%- include('../inc/footer.ejs') %>
-</body>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+  let voucherId, currentStatus;
+  const toggleForm = document.forms["delete-product-form"];
+  const modal = document.getElementById("myModal");
+  const actionText = document.getElementById("action-text");
 
+  // Xử lý sự kiện khi modal hiển thị
+  modal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+    voucherId = button.getAttribute("data-id");
+    currentStatus = button.getAttribute("data-status") === "true";
+
+    // Cập nhật nội dung hành động trong modal
+    actionText.textContent = currentStatus ? "khôi phục" : "ngừng sử dụng";
+  });
+
+  // Xử lý khi nhấn nút "Đồng Ý"
+  const btnToggle = document.getElementById("toggle-btn");
+  btnToggle.onclick = function () {
+    toggleForm.action = "api/voucher/toggle/" + voucherId;
+    toggleForm.submit();
+  };
+});
+
+
+    </script>
+  </body>
 </html>
