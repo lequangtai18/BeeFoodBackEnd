@@ -388,7 +388,7 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const response = await fetch("/api/recent-purchases");
+    const response = await fetch("/api/admin/get-branches");
     if (!response.ok) {
       throw new Error("Không thể tải hoạt động gần đây.");
     }

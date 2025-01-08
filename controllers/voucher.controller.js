@@ -110,16 +110,26 @@ exports.handleDecreseVoucher = async (req, res, next) => {
     return -1;
   }
 };
-exports.deleteVoucher = async (req, res, next) => {
-  const id = req.params.id;
-  console.log(id);
-  try {
-    await voucherModel.voucherModel.findByIdAndDelete({ _id: id });
-    res.redirect("/listvoucher");
-  } catch (error) {
-    return res.status(500).json({ msg: error.message });
-  }
+exports.ngungkinhdoanhVoucher = async (req, res, next) => {
+ const id = req.params.id;
+   const vc = await voucherModel.voucherModel.findById({ _id: id });
+   try {
+     const voucher = await voucherModel.voucherModel.findByIdAndUpdate(
+       {
+         _id: id,
+       },
+       { isHide: !vc.isHide }
+     );
+ 
+     if (!voucher) {
+       return res.status(204).json({ msg: "Voucher không tồn tại" });
+     }
+     res.redirect("/listvoucher");
+   } catch (error) {
+     return res.status(204).json({ msg: error.message });
+   }
 };
+
 exports.detailVoucher = async (req, res, next) => {
   const id = req.params.id;
 
@@ -128,6 +138,7 @@ exports.detailVoucher = async (req, res, next) => {
   });
   return voucher;
 };
+
 exports.editVoucher = async (req, res, next) => {
   const idVoucher = req.params.id;
   const id = req.session.user?._id;

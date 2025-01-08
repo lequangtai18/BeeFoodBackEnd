@@ -399,7 +399,7 @@ exports.getRevenue = async (req, res, next) => {
         isNaN(bill.toltalprice) ? total : total + bill.toltalprice,
       0
     );
-    res.render("revenue/showrevenue", {
+    res.render("revenue/adminRevenue", {
       req: req,
       bills: billsToday,
       billsThisMonth: billsThisMonth,

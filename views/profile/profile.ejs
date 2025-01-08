@@ -1,4 +1,126 @@
 <%- include('../inc/header-user.ejs') %>
+
+  <style>
+    /* Thiết lập cơ bản */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+
+    h3 {
+      color: #333;
+    }
+
+    /* Container chính */
+    .input-form {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Form label và input */
+    .form-label {
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: block;
+      color: #555;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    /* Nút bấm */
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    /* Các nút đặc biệt */
+    button[type="button"] {
+      background-color: #6c757d;
+      margin-top: 0;
+    }
+
+    button[type="button"]:hover {
+      background-color: #5a6268;
+    }
+
+    /* Hàng và cột */
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .col-md-6 {
+      flex: 1;
+    }
+
+    /* Thêm margin */
+    .mb-3 {
+      margin-bottom: 20px;
+    }
+
+    .mt-4 {
+      margin-top: 16px;
+    }
+
+    .mb-4 {
+      margin-bottom: 16px;
+    }
+
+    /* Nhấn mạnh lỗi */
+    .alert {
+      color: red;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .row {
+        flex-direction: column;
+      }
+
+      .col-md-6 {
+        margin-bottom: 20px;
+      }
+
+      .input-form {
+        margin: 20px;
+      }
+    }
+  </style>
+
   <div style="margin-top: 80px; height: 100vh; margin-left: 320px; flex: 1">
     <div class="input-form">
       <h3 style="text-align: center">Chỉnh sửa thông tin</h3>
@@ -20,9 +142,17 @@
           <input class="form-control" required placeholder="Thời gian đóng" name="timeoff" />
         </div>
 
-        <div class="mb-3 mt-4">
-          <label class="form-label">Địa chỉ</label>
-          <input class="form-control" required placeholder="Địa chỉ" name="address" />
+
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <label class="form-label" for="address">Địa chỉ</label>
+            <input style="width: 700px;" type="text" id="address" class="form-control" name="address"
+              placeholder="Nhập vị trí hoặc nhấn để tự động cập nhật" />
+          </div>
+          <div class="col-md-6 mb-4">
+            <button type="button" style="margin-top: 30px; width: 200px; margin-left: 150px; height: 40px;"
+              onclick="getCurrentLocation()">Dùng vị trí hiện tại</button>
+          </div>
         </div>
 
         <div class="mb-3">
@@ -34,5 +164,73 @@
       </form>
     </div>
   </div>
+
+  <script>
+    function getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            console.log("Latitude:", lat);
+            console.log("Longitude:", lon);
+
+            // Sử dụng Nominatim để chuyển tọa độ thành địa chỉ
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data && data.display_name) {
+              document.getElementById("address").value = data.display_name;
+              document.getElementById("latitude").value = lat;
+              document.getElementById("longitude").value = lon;
+            } else {
+              alert("Không thể lấy địa chỉ từ vị trí hiện tại.");
+            }
+          },
+          () => {
+            alert("Không thể truy cập vị trí. Hãy kiểm tra cài đặt trình duyệt.");
+          }
+        );
+      } else {
+        alert("Trình duyệt không hỗ trợ định vị.");
+      }
+    }
+  </script>
+
+  <script>
+    // Hàm gọi API OpenStreetMap Nominatim để lấy tọa độ từ địa chỉ
+    async function getCoordinatesFromAddress() {
+      const address = document.getElementById("address").value; // Lấy địa chỉ từ input
+
+      if (address) {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&addressdetails=1`;
+
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+
+          if (data && data.length > 0) {
+            const lat = data[0].lat;
+            const lon = data[0].lon;
+
+            document.getElementById("latitude").value = lat;
+            document.getElementById("longitude").value = lon;
+          } else {
+            alert("Không thể tìm thấy tọa độ cho địa chỉ này.");
+          }
+        } catch (error) {
+          alert("Có lỗi xảy ra khi tìm tọa độ.");
+          console.error(error);
+        }
+      } else {
+        alert("Vui lòng nhập địa chỉ.");
+      }
+    }
+
+    document.getElementById("address").addEventListener("blur", getCoordinatesFromAddress);
+
+  </script>
 
   <%- include('../inc/footer.ejs') %>

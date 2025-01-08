@@ -52,7 +52,8 @@ router.get(
 );
 router.post("/voucher/huydonhang", apiVoucher.huyDonHang);
 router.get("/voucher/getVoucher", apiVoucher.getVoucher);
-router.post("/voucher/delete/:id", apiVoucher.deleteVoucher);
+router.post("/voucher/delete/:id", apiVoucher.ngungkinhdoanhVoucher);
+
 router.post("/voucher/decrease", apiVoucher.handleDecreseVoucher);
 router.post(
   "/voucher/editVoucher/:id",
@@ -145,9 +146,12 @@ router.post("/restaurant/create", apiRestaurant.createRestaurant);
 router.get("/restaurant/:id", apiRestaurant.getInfoRestaurantById);
 
 router.post("/restaurant/delete/:id", apiRestaurant.deleteRestaurant);
+
 //products
 router.post("/product/delete/:id", apiProduct.ngungKinhDoanhProduct);
 router.get("/product/id/:id", apiProduct.getProduct);
+
+//Voucher
 
 const removeAccents = (str) => {
   return str
