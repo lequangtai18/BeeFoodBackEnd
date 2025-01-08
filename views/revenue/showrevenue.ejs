@@ -68,7 +68,7 @@
             <!-- Modal xem chi tiết đơn hàng -->
             <div class="modal fade" id="ordersModal" tabindex="-1" aria-labelledby="ordersModalLabel"
               aria-hidden="true">
-              <div class="modal-dialog modal-lg">
+              <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" id="ordersModalLabel">Danh sách đơn hàng</h5>
@@ -81,6 +81,11 @@
                           <th>Mã đơn hàng</th>
                           <th>Tên khách hàng</th>
                           <th>Ngày đặt hàng</th>
+                          <th>Tên sản phẩm</th>
+                          <th>Số lượng</th>
+                          <th>Đơn giá</th>
+                          <th>voucher</th>
+                          <th>Ship</th>
                           <th>Tổng tiền</th>
                         </tr>
                       </thead>
@@ -733,38 +738,152 @@
       // Trường hợp không có đơn hàng nào
       if (!Array.isArray(orders) || orders.length === 0) {
         tableBody.innerHTML = `
-          <tr>
-            <td colspan="4" class="text-center">Không có đơn hàng nào</td>
-          </tr>
-        `;
+      <tr>
+        <td colspan="9" class="text-center">Không có đơn hàng nào</td>
+      </tr>
+    `;
         return;
       }
 
       // Duyệt mảng đơn hàng, hiển thị từng dòng
       orders.forEach((order) => {
-        const tr = document.createElement("tr");
+        const { _id, userId, time, products, deliveryFee, toltalprice, voucherId } = order;
 
-        const tdId = document.createElement("td");
-        tdId.textContent = order._id;
-        tr.appendChild(tdId);
+        // Kiểm tra xem đơn hàng có sản phẩm hay không
+        if (Array.isArray(products) && products.length > 0) {
+          products.forEach((product, index) => {
+            const tr = document.createElement("tr");
 
-        const tdCustomerName = document.createElement("td");
-        tdCustomerName.textContent = order.userId.username ;
-        tr.appendChild(tdCustomerName);
+            // 1. Mã đơn hàng
+            const tdId = document.createElement("td");
+            tdId.textContent = _id;
+            tr.appendChild(tdId);
 
-        const tdOrderDate = document.createElement("td");
-        const dateValue = order.time ? new Date(order.time) : null;
-        tdOrderDate.textContent = dateValue
-          ? dateValue.toLocaleString("vi-VN")
-          : "(Chưa có ngày)";
-        tr.appendChild(tdOrderDate);
+            // 2. Tên khách hàng
+            const tdCustomerName = document.createElement("td");
+            tdCustomerName.textContent = userId?.username || "(Chưa có tên)";
+            tr.appendChild(tdCustomerName);
 
-        const tdTotal = document.createElement("td");
-        const price = order.toltalprice || 0;  // phòng trường hợp null/undefined
-        tdTotal.textContent = price.toLocaleString() + " VNĐ";
-        tr.appendChild(tdTotal);
+            // 3. Ngày đặt hàng
+            const tdOrderDate = document.createElement("td");
+            const dateValue = time ? new Date(time) : null;
+            tdOrderDate.textContent = dateValue
+              ? dateValue.toLocaleString("vi-VN")
+              : "(Chưa có ngày)";
+            tr.appendChild(tdOrderDate);
 
-        tableBody.appendChild(tr);
+            // 4. Tên sản phẩm
+            const tdProductName = document.createElement("td");
+            tdProductName.textContent = product.name || "(Không có sản phẩm)";
+            tr.appendChild(tdProductName);
+
+            // 5. Số lượng
+            const tdQuantity = document.createElement("td");
+            tdQuantity.textContent = product.quantity || 0;
+            tr.appendChild(tdQuantity);
+
+            // 6. Đơn giá
+            const tdUnitPrice = document.createElement("td");
+            const unitPrice = product.price || 0;
+            tdUnitPrice.textContent = unitPrice.toLocaleString() + " VNĐ";
+            tr.appendChild(tdUnitPrice);
+
+            // 7. Voucher (Giá tiền giảm)
+            if (index === 0) {
+              const tdVoucher = document.createElement("td");
+              if (voucherId && voucherId.money) {
+                tdVoucher.textContent = ` ${voucherId.money.toLocaleString()} VNĐ`;
+              } else {
+                tdVoucher.textContent = "Không áp dụng";
+              }
+              tr.appendChild(tdVoucher);
+            } else {
+              // Các dòng sau để trống cột Voucher
+              tr.appendChild(document.createElement("td"));
+            }
+
+
+            // 6. Ship (phí vận chuyển)
+            if (index === 0) {
+              const tdShip = document.createElement("td");
+              tdShip.textContent = (deliveryFee || 0).toLocaleString() + " VNĐ";
+              tr.appendChild(tdShip);
+            } else {
+              // Các dòng sau để trống cột Ship
+              const tdShipEmpty = document.createElement("td");
+              tr.appendChild(tdShipEmpty);
+            }
+
+            // 7. Tổng tiền
+            if (index === 0) {
+              const tdTotal = document.createElement("td");
+              tdTotal.textContent = (toltalprice || 0).toLocaleString() + " VNĐ";
+              tr.appendChild(tdTotal);
+            } else {
+              // Các dòng sau để trống cột Tổng tiền
+              const tdTotalEmpty = document.createElement("td");
+              tr.appendChild(tdTotalEmpty);
+            }
+
+            tableBody.appendChild(tr);
+          });
+        } else {
+          // Trường hợp không có mảng products hoặc rỗng
+          const tr = document.createElement("tr");
+
+          // 1. Mã đơn hàng
+          const tdId = document.createElement("td");
+          tdId.textContent = _id;
+          tr.appendChild(tdId);
+
+          // 2. Tên khách hàng
+          const tdCustomerName = document.createElement("td");
+          tdCustomerName.textContent = userId?.username || "(Chưa có tên)";
+          tr.appendChild(tdCustomerName);
+
+          // 3. Ngày đặt hàng
+          const tdOrderDate = document.createElement("td");
+          const dateValue = time ? new Date(time) : null;
+          tdOrderDate.textContent = dateValue
+            ? dateValue.toLocaleString("vi-VN")
+            : "(Chưa có ngày)";
+          tr.appendChild(tdOrderDate);
+
+          // 4. Tên sản phẩm
+          const tdProductName = document.createElement("td");
+          tdProductName.textContent = "(Không có sản phẩm)";
+          tr.appendChild(tdProductName);
+
+          // 5. Số lượng
+          const tdQuantity = document.createElement("td");
+          tdQuantity.textContent = 0;
+          tr.appendChild(tdQuantity);
+          // 6. Đơn giá
+          const tdUnitPrice = document.createElement("td");
+          tdUnitPrice.textContent = "0 VNĐ";
+          tr.appendChild(tdUnitPrice);
+
+          // 7. Voucher (Giá tiền giảm)
+          const tdVoucher = document.createElement("td");
+          if (voucherId && voucherId.money) {
+            tdVoucher.textContent = ` ${voucherId.money.toLocaleString()} VNĐ`;
+          } else {
+            tdVoucher.textContent = "Không áp dụng";
+          }
+          tr.appendChild(tdVoucher)
+
+          // 6. Ship (phí vận chuyển)
+          const tdShip = document.createElement("td");
+          tdShip.textContent = (deliveryFee || 0).toLocaleString() + " VNĐ";
+          tr.appendChild(tdShip);
+
+          // 7. Tổng tiền
+          const tdTotal = document.createElement("td");
+          tdTotal.textContent = (toltalprice || 0).toLocaleString() + " VNĐ";
+          tr.appendChild(tdTotal);
+
+          tableBody.appendChild(tr);
+        }
       });
     }
   </script>

@@ -1071,6 +1071,10 @@ exports.getFilteredOrders = async (req, res) => {
         select: "username",      // Lấy trường username (và các trường khác nếu cần)
       })
       // .populate({ ... nếu muốn populate thêm fields khác ... })
+      .populate({
+        path: "voucherId",
+        select: "money name", // Lấy trường money và name từ voucher
+      })
       .exec();
 
     if (!orders || orders.length === 0) {
