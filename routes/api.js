@@ -219,6 +219,7 @@ router.post(
   upload.single("image"),
   apiRestaurant.editProfile
 );
+
 router.post(
   "/product/addProduct",
   upload.single("image"),

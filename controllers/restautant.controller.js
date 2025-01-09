@@ -56,6 +56,9 @@ exports.editProfile = async (req, res, next) => {
       address: req.body.address, // Cập nhật địa chỉ
       timeon: req.body.timeon, // Thời gian mở
       timeoff: req.body.timeoff, // Thời gian đóng
+      address: req.body.address, // Địa chỉ
+      latitude: req.body.latitude,
+      longitude: req.body.longitude,
     };
 
     // Nếu có file ảnh, thêm URL ảnh vào dữ liệu

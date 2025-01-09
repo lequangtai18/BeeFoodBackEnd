@@ -693,6 +693,7 @@
       });
     });
   </script>
+  
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const billsCountElement = document.getElementById("billsCount");
@@ -724,12 +725,6 @@
       });
     });
 
-
-
-    /**
-     * Hàm hiển thị danh sách đơn hàng vào bảng
-     * @param {Array} orders - Mảng các object đơn hàng
-     */
     function renderOrdersToTable(orders) {
       const tableBody = document.querySelector("#ordersTable tbody");
       tableBody.innerHTML = "";
