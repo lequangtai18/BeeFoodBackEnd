@@ -1037,58 +1037,103 @@ exports.getOrdersByUser = async (req, res) => {
 
 exports.getFilteredOrders = async (req, res) => {
   try {
-    // Lấy các tham số từ query
-    // Ví dụ: /api/orders/filter?startDate=2025-01-01&endDate=2025-01-07
+    // Lấy user từ session
+    const user = req.session.user;
+    if (!user) {
+      return res.status(401).json({ msg: "Bạn chưa đăng nhập hoặc session đã hết hạn." });
+    }
+
+    // Lấy restaurantId từ user
+    const restaurantId = user._id.toString();
+
+    // Lấy các tham số từ query (chỉ startDate, endDate)
     const { startDate, endDate } = req.query;
 
-    // Chuẩn bị object filter
+    // Chuẩn bị object filter chung
     const filter = {};
 
-    // Nếu startDate, endDate được truyền lên thì lọc theo khoảng ngày
+    // Lọc theo khoảng thời gian
     if (startDate || endDate) {
       filter.time = {};
       if (startDate) {
         filter.time.$gte = new Date(startDate);
       }
       if (endDate) {
-        // Tạo một ngày ngay sau endDate
         const endNextDay = new Date(endDate);
         endNextDay.setDate(endNextDay.getDate() + 1);
         filter.time.$lt = endNextDay;
       }
     }
 
-    // Bạn có thể thêm các điều kiện lọc khác tại đây
-    // Ví dụ filter.status = 3, hay filter.userId = ...
-    filter.status = 3; // Lấy đơn hàng status=3 (hoàn thành) chẳng hạn.
-
-    console.log("Filter conditions:", filter);
+    // Lọc theo trạng thái đơn hàng đã hoàn thành (giả sử 3 là "completed")
+    filter.status = 3;
 
     // Truy vấn từ DB
     const orders = await historyModel.History.find(filter)
       .populate({
-        path: "userId",          // userId là trường trong historyModel
-        select: "username",      // Lấy trường username (và các trường khác nếu cần)
+        path: "userId",
+        select: "username",
       })
-      // .populate({ ... nếu muốn populate thêm fields khác ... })
       .populate({
         path: "voucherId",
-        select: "money name", // Lấy trường money và name từ voucher
+        select: "money name",
       })
       .exec();
 
     if (!orders || orders.length === 0) {
-      return res
-        .status(404)
-        .json({ msg: "Không tìm thấy đơn hàng nào với điều kiện lọc." });
+      return res.status(404).json({
+        msg: "Không tìm thấy đơn hàng nào với điều kiện lọc."
+      });
     }
 
-    // Trả về mảng đơn hàng
-    res.status(200).json(orders);
+    // Lọc sản phẩm trong mỗi đơn hàng chỉ lấy sản phẩm của nhà hàng này
+    const filteredOrders = orders.map((order) => {
+      // Chuyển sang object thuần (không phải Mongoose doc) để dễ thao tác
+      const filteredOrder = order.toObject();
+
+      // Giữ lại product thuộc restaurantId này
+      filteredOrder.products = filteredOrder.products.filter(
+        (product) => product.restaurantId.toString() === restaurantId
+      );
+
+      // Nếu còn sản phẩm, tính lại tổng tiền
+      if (filteredOrder.products.length > 0) {
+        // Tổng tiền (chỉ của sản phẩm thuộc nhà hàng này)
+        const productTotal = filteredOrder.products.reduce(
+          (sum, product) => sum + product.price * product.quantity,
+          0
+        );
+
+        filteredOrder.toltalprice = productTotal;
+
+        // Nếu có voucher, giảm giá
+        if (filteredOrder.voucherId && filteredOrder.voucherId.money) {
+          // Tính giảm giá theo số lượng sản phẩm của nhà hàng / tổng số sản phẩm
+          const voucherDiscount =
+            (filteredOrder.voucherId.money * filteredOrder.products.length) /
+            order.products.length;
+          filteredOrder.toltalprice -= voucherDiscount;
+        }
+      }
+
+      return filteredOrder;
+    });
+
+    // Chỉ trả về đơn hàng nào còn sản phẩm của nhà hàng
+    const validOrders = filteredOrders.filter(
+      (order) => order.products.length > 0
+    );
+
+    if (validOrders.length === 0) {
+      return res.status(404).json({
+        msg: "Không tìm thấy đơn hàng nào cho nhà hàng này trong khoảng thời gian đã chọn.",
+      });
+    }
+
+    // Trả về
+    res.status(200).json(validOrders);
   } catch (error) {
     console.error("Lỗi khi lọc đơn hàng:", error);
     res.status(500).json({ msg: "Lỗi máy chủ nội bộ" });
   }
 };
-
-

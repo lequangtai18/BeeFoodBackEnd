@@ -704,9 +704,8 @@
           const startDate = document.getElementById("startDate").value;
           const endDate = document.getElementById("endDate").value;
 
-          // Xây URL kèm query
+          // Gọi API không cần restaurantId
           const url = `/api/orders/filter?startDate=${startDate}&endDate=${endDate}`;
-
           const response = await fetch(url);
           if (!response.ok) {
             throw new Error("Không thể lấy danh sách đơn hàng. Mã lỗi: " + response.status);
@@ -726,13 +725,13 @@
     });
 
 
+
     /**
      * Hàm hiển thị danh sách đơn hàng vào bảng
      * @param {Array} orders - Mảng các object đơn hàng
      */
     function renderOrdersToTable(orders) {
       const tableBody = document.querySelector("#ordersTable tbody");
-      // Xóa dữ liệu cũ
       tableBody.innerHTML = "";
 
       // Trường hợp không có đơn hàng nào
@@ -745,11 +744,11 @@
         return;
       }
 
-      // Duyệt mảng đơn hàng, hiển thị từng dòng
+      // Duyệt mảng đơn hàng
       orders.forEach((order) => {
         const { _id, userId, time, products, deliveryFee, toltalprice, voucherId } = order;
 
-        // Kiểm tra xem đơn hàng có sản phẩm hay không
+        // Nếu có products thì lặp qua
         if (Array.isArray(products) && products.length > 0) {
           products.forEach((product, index) => {
             const tr = document.createElement("tr");
@@ -788,7 +787,7 @@
             tdUnitPrice.textContent = unitPrice.toLocaleString() + " VNĐ";
             tr.appendChild(tdUnitPrice);
 
-            // 7. Voucher (Giá tiền giảm)
+            // 7. Voucher (Giá tiền giảm) - chỉ hiển thị ở dòng đầu
             if (index === 0) {
               const tdVoucher = document.createElement("td");
               if (voucherId && voucherId.money) {
@@ -798,31 +797,26 @@
               }
               tr.appendChild(tdVoucher);
             } else {
-              // Các dòng sau để trống cột Voucher
               tr.appendChild(document.createElement("td"));
             }
 
-
-            // 6. Ship (phí vận chuyển)
+            // 8. Ship (phí vận chuyển) - chỉ hiển thị ở dòng đầu
             if (index === 0) {
               const tdShip = document.createElement("td");
               tdShip.textContent = (deliveryFee || 0).toLocaleString() + " VNĐ";
               tr.appendChild(tdShip);
             } else {
-              // Các dòng sau để trống cột Ship
-              const tdShipEmpty = document.createElement("td");
-              tr.appendChild(tdShipEmpty);
+              tr.appendChild(document.createElement("td"));
             }
 
-            // 7. Tổng tiền
+            // 9. Tổng tiền - chỉ hiển thị ở dòng đầu
             if (index === 0) {
               const tdTotal = document.createElement("td");
-              tdTotal.textContent = (toltalprice || 0).toLocaleString() + " VNĐ";
+              let finalTotal = (toltalprice || 0) + (deliveryFee || 0);
+              tdTotal.textContent = finalTotal.toLocaleString() + " VNĐ";
               tr.appendChild(tdTotal);
             } else {
-              // Các dòng sau để trống cột Tổng tiền
-              const tdTotalEmpty = document.createElement("td");
-              tr.appendChild(tdTotalEmpty);
+              tr.appendChild(document.createElement("td"));
             }
 
             tableBody.appendChild(tr);
@@ -858,6 +852,7 @@
           const tdQuantity = document.createElement("td");
           tdQuantity.textContent = 0;
           tr.appendChild(tdQuantity);
+
           // 6. Đơn giá
           const tdUnitPrice = document.createElement("td");
           tdUnitPrice.textContent = "0 VNĐ";
@@ -870,14 +865,14 @@
           } else {
             tdVoucher.textContent = "Không áp dụng";
           }
-          tr.appendChild(tdVoucher)
+          tr.appendChild(tdVoucher);
 
-          // 6. Ship (phí vận chuyển)
+          // 8. Ship (phí vận chuyển)
           const tdShip = document.createElement("td");
           tdShip.textContent = (deliveryFee || 0).toLocaleString() + " VNĐ";
           tr.appendChild(tdShip);
 
-          // 7. Tổng tiền
+          // 9. Tổng tiền
           const tdTotal = document.createElement("td");
           tdTotal.textContent = (toltalprice || 0).toLocaleString() + " VNĐ";
           tr.appendChild(tdTotal);
@@ -886,6 +881,7 @@
         }
       });
     }
+
   </script>
 
 
