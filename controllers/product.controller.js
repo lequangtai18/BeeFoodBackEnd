@@ -237,10 +237,11 @@ exports.getListProduct = async (req, res, next) => {
     ) {
       productsQuery.restaurantId = req.query.restaurantFilter.trim();
     }
+
     if (req.query.name && req.query.name.trim() !== "") {
-      // Sử dụng biểu thức chính quy để tìm kiếm sản phẩm theo tên
       productsQuery.name = { $regex: new RegExp(req.query.name.trim(), "i") };
     }
+
     const itemsPerPage = 15;
     const page = parseInt(req.query.page) || 1;
 
@@ -263,15 +264,23 @@ exports.getListProduct = async (req, res, next) => {
 
     const restaurantMap = new Map();
     restaurants.forEach((restaurant) => {
-      restaurantMap.set(restaurant._id.toString(), restaurant.name);
+      if (restaurant && restaurant._id) {
+        restaurantMap.set(restaurant._id.toString(), restaurant.name);
+      }
     });
 
     const productsWithRestaurantName = products.map((product) => {
+      const restaurantName = restaurantMap.get(product.restaurantId?.toString());
       return {
         ...product.toObject(),
-        restaurantName: restaurantMap.get(product.restaurantId.toString()),
+        restaurantName: restaurantName || "Không có tên",
       };
     });
+
+    if (productsWithRestaurantName.length === 0) {
+      res.status(204).json({ msg: "Không có dữ liệu" });
+      return;
+    }
 
     const pagination = {
       currentPage: page,
@@ -288,7 +297,7 @@ exports.getListProduct = async (req, res, next) => {
       req: req,
     });
   } catch (error) {
-    return res.status(204).json({ msg: error.message });
+    res.status(500).json({ msg: error.message });
   }
 };
 
