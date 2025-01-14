@@ -33,6 +33,7 @@
             <th scope="col">Ảnh</th>
             <th scope="col">Địa chỉ</th>
             <th scope="col">Hoạt động</th>
+            <th scope="col">Trạng thái</th>
           </tr>
         </thead>
         <tbody>
@@ -58,6 +59,13 @@
             </td>
             <td><%= list[i].address %></td>
             <td><%= list[i].daysSinceCreation %> ngày</td>
+
+            <td>
+              <button class="btn btn-sm btn-<%= list[i].isLocked ? 'success' : 'danger' %>"
+                data-list-id="<%= list[i]._id %>" data-action="<%= list[i].isLocked ? 'unlock' : 'lock' %>">
+                <%= list[i].isLocked ? 'Mở khóa' : 'Khóa' %>
+              </button>
+            </td>
           </tr>
           <% } %>
         </tbody>
@@ -77,5 +85,41 @@
   </div>
   <!-- End Page Title -->
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const table = document.querySelector('.table');
+
+  table.addEventListener('click', function (event) {
+    const target = event.target;
+    if (target.tagName === 'BUTTON' && target.dataset.listId) {
+      const restaurantId = target.dataset.listId;
+      const action = target.dataset.action;
+
+      fetch(`/api/restaurant/${action}/${restaurantId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Cập nhật trạng thái nút
+            target.dataset.action = data.message.includes('khóa') ? 'unlock' : 'lock';
+            target.classList.toggle('btn-danger');
+            target.classList.toggle('btn-success');
+            target.textContent = data.message.includes('khóa') ? 'Mở khóa' : 'Khóa';
+            alert(data.message);
+          } else {
+            alert(data.message || 'Có lỗi xảy ra!');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Không thể thực hiện yêu cầu.');
+        });
+    }
+  });
+});
+</script>
 
 <%- include('../inc/footer.ejs') %>
