@@ -51,22 +51,36 @@ exports.createOrderSuccess = async (req, res, next) => {
 };
 
 exports.getDonHangChiTiet = async (id) => {
-  const data = await historyModel.History.findOne({ _id: id });
-  const user = await userController.userModel.findOne({
-    _id: new mongoose.Types.ObjectId(data?.userId),
-  });
-  const { username, phone } = user;
-  const dataConcat = {
-    product: data.products,
-    _id: data?._id,
-    username,
-    phone,
-    address: data.address,
-    totalPrice: data.toltalprice,
-    deliveryFee: data.deliveryFee,
-  };
-  return dataConcat;
+  try {
+    const data = await historyModel.History.findOne({ _id: id })
+      .populate("voucherId", "name money hsd isHetHan") // populate voucherId
+      .exec();
+    
+    const user = await userController.userModel.findOne({
+      _id: new mongoose.Types.ObjectId(data?.userId),
+    });
+
+    const { username, phone } = user;
+
+    const dataConcat = {
+      product: data.products,
+      _id: data._id,
+      username,
+      phone,
+      address: data.address,
+      totalPrice: data.toltalprice,
+      deliveryFee: data.deliveryFee,
+      voucher: data.voucherId || null, // Đảm bảo voucher được gửi đúng
+    };
+
+    console.log(dataConcat); // Kiểm tra lại dữ liệu đã gửi đến frontend
+    return dataConcat;
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết đơn hàng:", error);
+    throw error;  // Ném lại lỗi nếu có
+  }
 };
+
 
 exports.getSanPhamChiTiet = async (id) => {
   const data = await historyModel.History.findOne({ _id: id });

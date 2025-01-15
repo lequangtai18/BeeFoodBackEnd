@@ -21,6 +21,7 @@ const restaurantSchema = new mongoose.Schema(
     totalEvaluate: { type: Number, default: 0 },
     totalStar: { type: Number, default: 0 },
     average: { type: Number, default: 0 },
+    isLocked: { type: Boolean, default: false }, // Trạng thái khóa/mở khóa
   },
   {
     collection: "restaurants",

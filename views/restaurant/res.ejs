@@ -66,6 +66,7 @@
                 <%= list[i].isLocked ? 'Mở khóa' : 'Khóa' %>
               </button>
             </td>
+
           </tr>
           <% } %>
         </tbody>
@@ -86,7 +87,7 @@
   <!-- End Page Title -->
 </main>
 
-<script>
+<!-- <script>
 document.addEventListener('DOMContentLoaded', function () {
   const table = document.querySelector('.table');
 
@@ -120,6 +121,49 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
-</script>
+</script> -->
 
-<%- include('../inc/footer.ejs') %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const table = document.querySelector('.table');
+  
+    table.addEventListener('click', function (event) {
+      const target = event.target;
+  
+      if (target.tagName === 'BUTTON' && target.dataset.listId) {
+        const restaurantId = target.dataset.listId;
+        const action = target.dataset.action;
+  
+        // Gửi yêu cầu API để khóa/mở khóa nhà hàng
+        fetch(`/api/restaurant/${action}/${restaurantId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Cập nhật trạng thái nút
+              const isLocking = action === 'lock'; // Kiểm tra hành động hiện tại
+              target.dataset.action = isLocking ? 'unlock' : 'lock'; // Đổi action
+              target.classList.toggle('btn-danger', !isLocking); // Màu đỏ nếu đang mở khóa
+              target.classList.toggle('btn-success', isLocking); // Màu xanh nếu đang khóa
+              target.textContent = isLocking ? 'Mở khóa' : 'Khóa'; // Cập nhật nội dung nút
+  
+              alert(data.message); // Hiển thị thông báo thành công
+            } else {
+              alert(data.message || 'Có lỗi xảy ra!');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Không thể thực hiện yêu cầu.');
+          });
+      }
+    });
+  });
+  
+  </script>
+
+
+  <%- include('../inc/footer.ejs') %>
