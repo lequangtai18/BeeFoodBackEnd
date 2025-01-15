@@ -1,3 +1,41 @@
+<style>
+  /* Đảm bảo bố cục hàng ngang */
+  .section.dashboard .row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .section.dashboard .col-lg-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  /* Card điều chỉnh margin */
+  .card {
+    margin-bottom: 20px;
+  }
+
+  /* Responsive cho màn hình nhỏ */
+  @media (max-width: 992px) {
+    .section.dashboard .col-lg-6 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+
+  .activity {
+    padding-right: 0;
+    /* Xóa khoảng cách bên phải */
+    margin-right: 0;
+    /* Sát vào lề phải */
+  }
+
+  .card {
+    margin-right: 0;
+    /* Xóa khoảng cách giữa thẻ và lề phải */
+  }
+</style>
+
 <%- include('../inc/header-admin.ejs') %>
   <main id="main" class="main">
     <div class="pagetitle">
@@ -40,325 +78,241 @@
                 </div>
               </div>
             </form>
-
           </div>
-
         </div>
       </div>
 
+      <div class="row">
+        <div id="branchReportsChart" style="margin-top: 20px;"></div>
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+            <!-- Sales Card -->
+            <div class="col-xxl-6 col-md-6">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    Bán hàng
+                  </h5>
 
-      <div id="branchReportsChart" style="margin-top: 20px;"></div>
-
-      <!-- Left side columns -->
-      <div class="col-lg-8">
-        <div class="row">
-          <!-- Sales Card -->
-          <div class="col-xxl-6 col-md-6">
-            <div class="card info-card sales-card">
-              <!-- <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" id="filterDropdown">
-                  <li class="dropdown-header text-start">
-                    <h6>Filter</h6>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" onclick="updateCardData('Hôm nay', <%= bills.length %>)">Hôm
-                      nay</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#"
-                      onclick="updateCardData('Tháng này', <%= billsThisMonth.length %>)">Tháng này</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#"
-                      onclick="updateCardData('Năm nay', <%= billsThisYear.length %>)">Năm nay</a>
-                  </li>
-                </ul>
-              </div> -->
-
-              <div class="card-body">
-                <h5 class="card-title">
-                  Bán hàng
-                </h5>
-
-                <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-cart"></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6 id="billsCount">
-                      <%= bills.length %>
-                    </h6>
-                    <span class="text-success small pt-1 fw-bold">Đơn hàng</span>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-cart"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="billsCount">
+                        <%= (bills.length = 0) %>
+                      </h6>
+                      <span class="text-success small pt-1 fw-bold">Đơn hàng</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- End Sales Card -->
+            <!-- End Sales Card -->
 
-          <!-- Revenue Card -->
-          <div class="col-xxl-6 col-xl-12">
-            <div class="card info-card customers-card">
-              <!-- <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" id="revenueFilterDropdown">
-                  <li class="dropdown-header text-start">
-                    <h6>Bộ lọc</h6>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#"
-                      onclick="updateRevenueCardData('Hôm nay', <%= totalRevenueToday %>)">Hôm nay</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#"
-                      onclick="updateRevenueCardData('Tháng này', <%= totalRevenueThisMonth %>)">Tháng này</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#"
-                      onclick="updateRevenueCardData('Năm nay', <%= totalRevenueThisYear %>)">Năm nay</a>
-                    >
-                  </li>
-                </ul>
-              </div> -->
-
-              <div class="card-body">
-                <h5 class="card-title">
-                  Doanh thu
-                </h5>
-
-                <div class="d-flex align-items-center">
-                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-currency-exchange"></i>
-                  </div>
-                  <div class="ps-3">
-                    <h6 id="totalRevenue">
-                      0
-                    </h6>
-                    <span class="text-success small pt-1 fw-bold">VNĐ</span>
+            <!-- Revenue Card -->
+            <div class="col-xxl-6 col-xl-12">
+              <div class="card info-card customers-card">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    Doanh thu
+                  </h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-currency-exchange"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6 id="totalRevenue">
+                        0
+                      </h6>
+                      <span class="text-success small pt-1 fw-bold">VNĐ</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- End Revenue Card -->
+            <!-- End Revenue Card -->
 
-          <!-- Reports -->
-          <div class="col-12">
-            <div class="card">
-              <!-- <div class="filter" id="reports">
-                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" id="reports">
-                  <li class="dropdown-header text-start">
-                    <h6>Filter</h6>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" data-filter="Today">Today</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="#" data-filter="This Month">This Month</a>
-                  </li>
-                </ul>
-              </div> -->
-
-              <div class="card-body">
-                <h5 class="card-title">
-                  Reports
-                </h5>
-
-                <!-- Line Chart -->
-                <div id="reportsChart"></div>
-                <!-- <p class="d-none" id="categories">
-                  <%= categoriesToday %>
-                </p>
-                <p class="d-none" id="data">
-                  <%= dataToday %>
-                </p>
-                <p class="d-none" id="revenue">
-                  <%= revenueToday %>
-                </p>
-
-                <p class="d-none" id="categoriesMonth">
-                  <%= categoriesMonth %>
-                </p>
-                <p class="d-none" id="dataMonth">
-                  <%= dataMonth %>
-                </p>
-                <p class="d-none" id="revenueMonth">
-                  <%= revenueMonth %>
-                </p> -->
-                <!-- End Line Chart -->
+            <!-- Reports -->
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    Reports
+                  </h5>
+                  <div id="reportsChart"></div>
+                </div>
               </div>
             </div>
-          </div>
-          <!-- End Reports -->
+            <!-- End Reports -->
 
-          <!-- Top Selling -->
-          <div class="col-12">
-            <div class="card top-selling overflow-auto">
-              <div class="card-body pb-0">
-                <h5 class="card-title">Top Selling</h5>
+            <!-- Top Selling -->
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Top Selling</h5>
 
-                <table class="table table-borderless">
-                  <thead>
-                    <tr>
-                      <th scope="col" class="sortable">Ảnh</th>
-                      <th scope="col" class="sortable">Tên sản phẩm</th>
-                      <th scope="col" class="sortable" data-sort="number">
-                        Giá ↑↓
-                      </th>
-                      <th scope="col" class="sortable" data-sort="number" style="text-align: center">
-                        Đã bán ↑↓
-                      </th>
-                      <th scope="col" class="sortable" data-sort="number" style="text-align: right">
-                        Doanh thu ↑↓
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% for (let i=0; i < topSelling.length; i++) { %>
+                  <table class="table table-borderless">
+                    <thead>
                       <tr>
-                        <td>
-                          <img src="<%= topSelling[i].imageURL %>" alt="<%= topSelling[i].name %>"
-                            style="max-width: 50px" />
-                        </td>
-                        <td>
-                          <%= topSelling[i].name %>
-                        </td>
-                        <td>
-                          <%= topSelling[i].price %>
-                        </td>
-                        <td style="text-align: center">
-                          <%= topSelling[i].quantity %>
-                        </td>
-                        <td style="text-align: right">
-                          <%= topSelling[i].totalRevenue %>
-                        </td>
+                        <th scope="col" class="sortable">Ảnh</th>
+                        <th scope="col" class="sortable">Tên sản phẩm</th>
+                        <th scope="col" class="sortable" data-sort="number">
+                          Giá ↑↓
+                        </th>
+                        <th scope="col" class="sortable" data-sort="number" style="text-align: center">
+                          Đã bán ↑↓
+                        </th>
+                        <th scope="col" class="sortable" data-sort="number" style="text-align: right">
+                          Doanh thu ↑↓
+                        </th>
                       </tr>
-                      <% } %>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          <!-- End Top Selling -->
-        </div>
-      </div>
-      <!-- End Left side columns -->
-
-      <!-- Right side columns -->
-      <div class="col-lg-4">
-        <!-- Recent Activity -->
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Hoạt động gần đây</h5>
-
-            <div class="activity">
-              <% for (let i=0; i < recent.length; i++) { %>
-                <div class="activity-item d-flex">
-                  <div class="activite-label">
-                    <%= recent[i].time %>
-                  </div>
-                  <i class="bi bi-circle-fill activity-badge text-success align-self-start"></i>
-                  <div class="activity-content">
-                    <%= recent[i].userName %> đã mua <%= recent[i].productName %>
-                        tại nhà hàng
-                        <a href="#" class="fw-bold text-dark">
-                          <%= recent[i].restaurantName %>
-                        </a>
-                  </div>
+                    </thead>
+                    <tbody>
+                      <% for (let i=0; i < topSelling.length; i++) { %>
+                        <tr>
+                          <td>
+                            <img src="<%= topSelling[i].imageURL %>" alt="<%= topSelling[i].name %>"
+                              style="max-width: 50px" />
+                          </td>
+                          <td>
+                            <%= topSelling[i].name %>
+                          </td>
+                          <td>
+                            <%= topSelling[i].price %>
+                          </td>
+                          <td style="text-align: center">
+                            <%= topSelling[i].quantity %>
+                          </td>
+                          <td style="text-align: right">
+                            <%= topSelling[i].totalRevenue %>
+                          </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                  </table>
                 </div>
-                <% } %>
-
-                  <!-- End activity item-->
-            </div>
-          </div>
-        </div>
-        <!-- End Recent Activity -->
-
-        <!-- News & Updates Traffic -->
-        <div class="card">
-          <div class="card-body pb-0">
-            <h5 class="card-title">Thông tin</h5>
-
-            <div class="news">
-              <div class="post-item clearfix">
-                <img
-                  src="https://i1-thethao.vnecdn.net/2023/12/17/t6k2r3fdxzki7bpn4jo5d3irfe-170-5604-5377-1702831193.jpg?w=220&h=132&q=100&dpr=1&fit=crop&s=1wOvC_EWOiZdsZBdWTmBCA"
-                  alt="" />
-                <h4>
-                  <a
-                    href="https://vnexpress.net/aston-villa-tiep-tuc-thach-thuc-cac-ong-lon-ngoai-hang-anh-4690001.html">Aston
-                    Villa tiếp tục thách thức các ông lớn Ngoại hạng
-                    Anh</a>
-                </h4>
-                <p>
-                  Chiến thắng ngược 2-1 trước Brentford giúp Aston Villa tăng...
-                </p>
-              </div>
-
-              <div class="post-item clearfix">
-                <img
-                  src="https://i1-thethao.vnecdn.net/2023/12/18/464qrq5xubmppbieconxklowme-170-6976-9929-1702840564.jpg?w=380&h=228&q=100&dpr=1&fit=crop&s=9p0aDt3JsmEwupTMSyZ1jw"
-                  alt="" />
-                <h4>
-                  <a href="https://vnexpress.net/man-utd-buoc-liverpool-chia-diem-o-ngoai-hang-anh-4690006.html">Man
-                    Utd buộc Liverpool chia điểm ở Ngoại hạng Anh</a>
-                </h4>
-                <p>
-                  Hứng chịu 34 cú dứt điểm từ Liverpool, nhưng Man Utd vẫn kiếm
-                  được một điểm từ trận
-                </p>
-              </div>
-
-              <div class="post-item clearfix">
-                <img
-                  src="https://i1-vnexpress.vnecdn.net/2023/12/17/anh-chup-man-hinh-2023-12-17-l-2946-8241-1702803706.png?w=220&h=132&q=100&dpr=1&fit=crop&s=Jlur_MTExeLwgvgvTOunwQ"
-                  alt="" />
-                <h4>
-                  <a href="https://vnexpress.net/bao-hinh-thanh-gan-bien-dong-4689938.html">Bão hình thành gần Biển
-                    Đông</a>
-                </h4>
-                <p>
-                  Bão Jelawat mạnh cấp 8 hình thành ở vùng biển phía đông nam
-                  miền
-                </p>
-              </div>
-
-              <div class="post-item clearfix">
-                <img
-                  src="https://i1-vnexpress.vnecdn.net/2023/12/17/tongthongputin8470jpgwebp-1702-4014-9733-1702822405.jpg?w=220&h=132&q=100&dpr=1&fit=crop&s=FNpVRFsy-u4qMkEhOGe81g"
-                  alt="" />
-                <h4>
-                  <a href="https://vnexpress.net/ong-putin-tuyen-bo-bien-nga-thanh-cuong-quoc-tu-chu-4689981.html">Ông
-                    Putin tuyên bố biến Nga thành cường quốc tự chủ</a>
-                </h4>
-                <p>
-                  Tổng thống Putin hứa sẽ biến Nga thành một cường quốc có khả
-                  năng tự chủ nhằm đối phó những áp lực từ phương Tây.
-                </p>
-              </div>
-
-              <div class="post-item clearfix">
-                <img
-                  src="https://i1-thethao.vnecdn.net/2023/12/17/A1-jpeg-4843-1702822493.jpg?w=1020&h=0&q=100&dpr=1&fit=crop&s=hU8meFhx4amBUHZeKkGrZw"
-                  alt="" />
-                <h4>
-                  <a href="https://vnexpress.net/van-quyet-giup-ha-noi-fc-thang-tran-derby-thu-do-4689984.html">Văn
-                    Quyết giúp Hà Nội FC thắng trận derby Thủ đô</a>
-                </h4>
-                <p>
-                  Tiền đạo Nguyễn Văn Quyết ghi bàn và kiến tạo, giúp Hà Nội FC
-                  hạ Thể Công Viettel 2-0 ở vòng 6 V-League tối 17/12.
-                </p>
               </div>
             </div>
-            <!-- End sidebar recent posts-->
+            <!-- End Top Selling -->
           </div>
         </div>
-        <!-- End News & Updates -->
-      </div>
-      <!-- End Right side columns -->
+        <!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+          <!-- Recent Activity -->
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Hoạt động gần đây</h5>
+
+              <div class="activity">
+                <% for (let i=0; i < recent.length; i++) { %>
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">
+                      <%= recent[i].time %>
+                    </div>
+                    <i class="bi bi-circle-fill activity-badge text-success align-self-start"></i>
+                    <div class="activity-content">
+                      <%= recent[i].userName %> đã mua <%= recent[i].productName %>
+                          tại nhà hàng
+                          <a href="#" class="fw-bold text-dark">
+                            <%= recent[i].restaurantName %>
+                          </a>
+                    </div>
+                  </div>
+                  <% } %>
+
+                    <!-- End activity item-->
+              </div>
+            </div>
+          </div>
+          <!-- End Recent Activity -->
+
+          <!-- News & Updates Traffic -->
+          <div class="card">
+            <div class="card-body pb-0">
+              <h5 class="card-title">Thông tin</h5>
+
+              <div class="news">
+                <div class="post-item clearfix">
+                  <img
+                    src="https://i1-thethao.vnecdn.net/2023/12/17/t6k2r3fdxzki7bpn4jo5d3irfe-170-5604-5377-1702831193.jpg?w=220&h=132&q=100&dpr=1&fit=crop&s=1wOvC_EWOiZdsZBdWTmBCA"
+                    alt="" />
+                  <h4>
+                    <a
+                      href="https://vnexpress.net/aston-villa-tiep-tuc-thach-thuc-cac-ong-lon-ngoai-hang-anh-4690001.html">Aston
+                      Villa tiếp tục thách thức các ông lớn Ngoại hạng
+                      Anh</a>
+                  </h4>
+                  <p>
+                    Chiến thắng ngược 2-1 trước Brentford giúp Aston Villa tăng...
+                  </p>
+                </div>
+
+                <div class="post-item clearfix">
+                  <img
+                    src="https://i1-thethao.vnecdn.net/2023/12/18/464qrq5xubmppbieconxklowme-170-6976-9929-1702840564.jpg?w=380&h=228&q=100&dpr=1&fit=crop&s=9p0aDt3JsmEwupTMSyZ1jw"
+                    alt="" />
+                  <h4>
+                    <a href="https://vnexpress.net/man-utd-buoc-liverpool-chia-diem-o-ngoai-hang-anh-4690006.html">Man
+                      Utd buộc Liverpool chia điểm ở Ngoại hạng Anh</a>
+                  </h4>
+                  <p>
+                    Hứng chịu 34 cú dứt điểm từ Liverpool, nhưng Man Utd vẫn kiếm
+                    được một điểm từ trận
+                  </p>
+                </div>
+
+                <div class="post-item clearfix">
+                  <img
+                    src="https://i1-vnexpress.vnecdn.net/2023/12/17/anh-chup-man-hinh-2023-12-17-l-2946-8241-1702803706.png?w=220&h=132&q=100&dpr=1&fit=crop&s=Jlur_MTExeLwgvgvTOunwQ"
+                    alt="" />
+                  <h4>
+                    <a href="https://vnexpress.net/bao-hinh-thanh-gan-bien-dong-4689938.html">Bão hình thành gần Biển
+                      Đông</a>
+                  </h4>
+                  <p>
+                    Bão Jelawat mạnh cấp 8 hình thành ở vùng biển phía đông nam
+                    miền
+                  </p>
+                </div>
+
+                <div class="post-item clearfix">
+                  <img
+                    src="https://i1-vnexpress.vnecdn.net/2023/12/17/tongthongputin8470jpgwebp-1702-4014-9733-1702822405.jpg?w=220&h=132&q=100&dpr=1&fit=crop&s=FNpVRFsy-u4qMkEhOGe81g"
+                    alt="" />
+                  <h4>
+                    <a href="https://vnexpress.net/ong-putin-tuyen-bo-bien-nga-thanh-cuong-quoc-tu-chu-4689981.html">Ông
+                      Putin tuyên bố biến Nga thành cường quốc tự chủ</a>
+                  </h4>
+                  <p>
+                    Tổng thống Putin hứa sẽ biến Nga thành một cường quốc có khả
+                    năng tự chủ nhằm đối phó những áp lực từ phương Tây.
+                  </p>
+                </div>
+
+                <div class="post-item clearfix">
+                  <img
+                    src="https://i1-thethao.vnecdn.net/2023/12/17/A1-jpeg-4843-1702822493.jpg?w=1020&h=0&q=100&dpr=1&fit=crop&s=hU8meFhx4amBUHZeKkGrZw"
+                    alt="" />
+                  <h4>
+                    <a href="https://vnexpress.net/van-quyet-giup-ha-noi-fc-thang-tran-derby-thu-do-4689984.html">Văn
+                      Quyết giúp Hà Nội FC thắng trận derby Thủ đô</a>
+                  </h4>
+                  <p>
+                    Tiền đạo Nguyễn Văn Quyết ghi bàn và kiến tạo, giúp Hà Nội FC
+                    hạ Thể Công Viettel 2-0 ở vòng 6 V-League tối 17/12.
+                  </p>
+                </div>
+              </div>
+              <!-- End sidebar recent posts-->
+            </div>
+          </div>
+          <!-- End News & Updates -->
+        </div>
+        <!-- End Right side columns -->
       </div>
     </section>
   </main>

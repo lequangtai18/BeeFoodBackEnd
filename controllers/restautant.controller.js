@@ -430,3 +430,36 @@ exports.getCoordinatesByRestaurantId = async (req, res, next) => {
     return res.status(500).json({ msg: error.message });
   }
 };
+
+exports.lockRestaurants = async (req, res) => {
+  console.log('Locking restaurant with ID:', req.params.id); // Log ID
+  try {
+    const restaurantId = req.params.id;
+    const restaurant = await restaurantModel.restaurantModel.findById(restaurantId);
+
+    if (!restaurant) return res.status(404).json({ success: false, message: 'Nhà hàng không tồn tại!' });
+
+    restaurant.isLocked = true;
+    await restaurant.save();
+
+    res.json({ success: true, message: 'Nhà hàng đã bị khóa!' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server!' });
+  }
+};
+
+exports.unlockRestaurants = async (req, res) => {
+  try {
+    const restaurantId = req.params.id;
+    const restaurant = await restaurantModel.restaurantModel.findById(restaurantId);
+
+    if (!restaurant) return res.status(404).json({ success: false, message: 'Nhà hàng không tồn tại!' });
+
+    restaurant.isLocked = false;
+    await restaurant.save();
+
+    res.json({ success: true, message: 'Tài khoản đã được mở khóa!' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server!' });
+  }
+};

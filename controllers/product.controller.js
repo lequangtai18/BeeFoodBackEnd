@@ -72,7 +72,7 @@ exports.editProduct = async (req, res, next) => {
     _id: id,
   });
   return product;
-};  
+};
 
 exports.dataProductRestaurant = async (req, res, next) => {
   const id = req.session.user?._id;
@@ -175,46 +175,46 @@ exports.editDataProduct = async (req, res, next) => {
 };
 exports.addProduct = async (req, res, next) => {
   const id = req.session.user?._id;
-    const nameFile = req.file.originalname;
-    const blob = firebase.bucket.file(nameFile);
-    const blobWriter = blob.createWriteStream({
-      metadata: {
-        contentType: req.file.mimetype,
-      },
-    });
-  
-    blobWriter.on("finish", () => {
-      const realPrice = Number.parseInt(req.body.realPrice);
-      const discountPrice = Number.parseInt(req.body.discountPrice);
-  
-      // Kiểm tra giá tiền không âm
-      if (realPrice < 0 || discountPrice < 0) {
-        return res.status(400).json({ msg: "Giá tiền phải lớn hơn hoặc bằng 0" });
-      }
-  
-      const product = {
-        ...req.body,
-        realPrice: Number.parseInt(req.body.realPrice),
-        discountPrice: Number.parseInt(req.body.discountPrice),
-        description: Number.parseInt(req.body.description),
-        description: String(req.body.description),
-        restaurantId: id,
-        image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
-      };
+  const nameFile = req.file.originalname;
+  const blob = firebase.bucket.file(nameFile);
+  const blobWriter = blob.createWriteStream({
+    metadata: {
+      contentType: req.file.mimetype,
+    },
+  });
 
-     // Thêm vào cơ sở dữ liệu
-     productModel.productModel
-     .create(product)
-     .then(() => {
-       res.redirect("/showProduct");
-     })
-     .catch((error) => {
-       console.error("Lỗi khi lưu sản phẩm:", error);
-       res.status(500).send("Đã xảy ra lỗi khi thêm sản phẩm.");
-     });
- });
- blobWriter.end(req.file.buffer);
-  
+  blobWriter.on("finish", () => {
+    const realPrice = Number.parseInt(req.body.realPrice);
+    const discountPrice = Number.parseInt(req.body.discountPrice);
+
+    // Kiểm tra giá tiền không âm
+    if (realPrice < 0 || discountPrice < 0) {
+      return res.status(400).json({ msg: "Giá tiền phải lớn hơn hoặc bằng 0" });
+    }
+
+    const product = {
+      ...req.body,
+      realPrice: Number.parseInt(req.body.realPrice),
+      discountPrice: Number.parseInt(req.body.discountPrice),
+      description: Number.parseInt(req.body.description),
+      description: String(req.body.description),
+      restaurantId: id,
+      image: `https://firebasestorage.googleapis.com/v0/b/beefoodconsole.appspot.com/o/${nameFile}?alt=media`,
+    };
+
+    // Thêm vào cơ sở dữ liệu
+    productModel.productModel
+      .create(product)
+      .then(() => {
+        res.redirect("/showProduct");
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lưu sản phẩm:", error);
+        res.status(500).send("Đã xảy ra lỗi khi thêm sản phẩm.");
+      });
+  });
+  blobWriter.end(req.file.buffer);
+
 };
 
 // web
@@ -237,10 +237,11 @@ exports.getListProduct = async (req, res, next) => {
     ) {
       productsQuery.restaurantId = req.query.restaurantFilter.trim();
     }
+
     if (req.query.name && req.query.name.trim() !== "") {
-      // Sử dụng biểu thức chính quy để tìm kiếm sản phẩm theo tên
       productsQuery.name = { $regex: new RegExp(req.query.name.trim(), "i") };
     }
+
     const itemsPerPage = 15;
     const page = parseInt(req.query.page) || 1;
 
@@ -263,15 +264,23 @@ exports.getListProduct = async (req, res, next) => {
 
     const restaurantMap = new Map();
     restaurants.forEach((restaurant) => {
-      restaurantMap.set(restaurant._id.toString(), restaurant.name);
+      if (restaurant && restaurant._id) {
+        restaurantMap.set(restaurant._id.toString(), restaurant.name);
+      }
     });
 
     const productsWithRestaurantName = products.map((product) => {
+      const restaurantName = restaurantMap.get(product.restaurantId?.toString());
       return {
         ...product.toObject(),
-        restaurantName: restaurantMap.get(product.restaurantId.toString()),
+        restaurantName: restaurantName || "Không có tên",
       };
     });
+
+    if (productsWithRestaurantName.length === 0) {
+      res.status(204).json({ msg: "Không có dữ liệu" });
+      return;
+    }
 
     const pagination = {
       currentPage: page,
@@ -288,7 +297,7 @@ exports.getListProduct = async (req, res, next) => {
       req: req,
     });
   } catch (error) {
-    return res.status(204).json({ msg: error.message });
+    res.status(500).json({ msg: error.message });
   }
 };
 

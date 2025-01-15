@@ -240,6 +240,11 @@ router.post("/users/lock/:id", apiU.lockUser);
 // Mở khóa tài khoản
 router.post('/users/unlock/:id', apiU.unlockUser);
 
+// Khóa nhà hàng
+router.post("/restaurant/lock/:id", apiRestaurant.lockRestaurants);
+
+// Mở khóa nhà hàng
+router.post('/restaurant/unlock/:id', apiRestaurant.unlockRestaurants);
 
 router.post("/revenue/date-range", apiHistory.getRevenueByDateRange);
 
