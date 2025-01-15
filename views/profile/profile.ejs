@@ -156,17 +156,21 @@
             console.log("Latitude:", lat);
             console.log("Longitude:", lon);
 
-            // Sử dụng Nominatim để chuyển tọa độ thành địa chỉ
             const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`;
-            const response = await fetch(url);
-            const data = await response.json();
+            try {
+              const response = await fetch(url);
+              const data = await response.json();
 
-            if (data && data.display_name) {
-              document.getElementById("signupAdress").value = data.display_name;
-              document.getElementById("latitude").value = lat;
-              document.getElementById("longitude").value = lon;
-            } else {
-              alert("Không thể lấy địa chỉ từ vị trí hiện tại.");
+              if (data && data.display_name) {
+                document.getElementById("address").value = data.display_name;
+                document.getElementById("latitude").value = lat;
+                document.getElementById("longitude").value = lon;
+              } else {
+                alert("Không thể lấy địa chỉ từ vị trí hiện tại.");
+              }
+            } catch (error) {
+              alert("Có lỗi xảy ra khi gọi API Nominatim.");
+              console.error(error);
             }
           },
           () => {
@@ -177,13 +181,11 @@
         alert("Trình duyệt không hỗ trợ định vị.");
       }
     }
-  </script>
 
-  <script>
     document.getElementById("address").addEventListener("blur", async function () {
-      const address = this.value; // Lấy giá trị từ ô nhập địa chỉ
+      const address = this.value.trim();
 
-      if (address.trim() === "") {
+      if (!address) {
         alert("Vui lòng nhập địa chỉ.");
         return;
       }
@@ -198,19 +200,19 @@
           const lat = data[0].lat;
           const lon = data[0].lon;
 
-          // Gán giá trị tọa độ vào các input ẩn
           document.getElementById("latitude").value = lat;
           document.getElementById("longitude").value = lon;
 
           console.log("Tọa độ tìm thấy:", { lat, lon });
         } else {
-          alert("Không thể tìm thấy tọa độ cho địa chỉ này.");
+          alert(`Không thể tìm thấy tọa độ cho địa chỉ: ${address}`);
         }
       } catch (error) {
         alert("Có lỗi xảy ra khi tìm tọa độ.");
         console.error(error);
       }
     });
+
   </script>
 
   <%- include('../inc/footer.ejs') %>

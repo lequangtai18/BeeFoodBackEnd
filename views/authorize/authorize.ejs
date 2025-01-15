@@ -341,17 +341,21 @@
             console.log("Latitude:", lat);
             console.log("Longitude:", lon);
 
-            // Sử dụng Nominatim để chuyển tọa độ thành địa chỉ
             const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`;
-            const response = await fetch(url);
-            const data = await response.json();
+            try {
+              const response = await fetch(url);
+              const data = await response.json();
 
-            if (data && data.display_name) {
-              document.getElementById("signupAdress").value = data.display_name;
-              document.getElementById("latitude").value = lat;
-              document.getElementById("longitude").value = lon;
-            } else {
-              alert("Không thể lấy địa chỉ từ vị trí hiện tại.");
+              if (data && data.display_name) {
+                document.getElementById("signupAdress").value = data.display_name;
+                document.getElementById("latitude").value = lat;
+                document.getElementById("longitude").value = lon;
+              } else {
+                alert("Không thể lấy địa chỉ từ vị trí hiện tại.");
+              }
+            } catch (error) {
+              alert("Có lỗi xảy ra khi gọi API Nominatim.");
+              console.error(error);
             }
           },
           () => {
@@ -362,39 +366,37 @@
         alert("Trình duyệt không hỗ trợ định vị.");
       }
     }
-  </script>
 
-  <script>
-    // Hàm gọi API OpenStreetMap Nominatim để lấy tọa độ từ địa chỉ
-    async function getCoordinatesFromAddress() {
-      const address = document.getElementById("signupAdress").value; // Lấy địa chỉ từ input
+    document.getElementById("signupAdress").addEventListener("blur", async function () {
+      const address = this.value.trim();
 
-      if (address) {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&addressdetails=1`;
-
-        try {
-          const response = await fetch(url);
-          const data = await response.json();
-
-          if (data && data.length > 0) {
-            const lat = data[0].lat;
-            const lon = data[0].lon;
-
-            document.getElementById("latitude").value = lat;
-            document.getElementById("longitude").value = lon;
-          } else {
-            alert("Không thể tìm thấy tọa độ cho địa chỉ này.");
-          }
-        } catch (error) {
-          alert("Có lỗi xảy ra khi tìm tọa độ.");
-          console.error(error);
-        }
-      } else {
+      if (!address) {
         alert("Vui lòng nhập địa chỉ.");
+        return;
       }
-    }
 
-    document.getElementById("signupAdress").addEventListener("blur", getCoordinatesFromAddress);
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&addressdetails=1`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+          const lat = data[0].lat;
+          const lon = data[0].lon;
+
+          document.getElementById("latitude").value = lat;
+          document.getElementById("longitude").value = lon;
+
+          console.log("Tọa độ tìm thấy:", { lat, lon });
+        } else {
+          alert(`Không thể tìm thấy tọa độ cho địa chỉ: ${address}`);
+        }
+      } catch (error) {
+        alert("Có lỗi xảy ra khi tìm tọa độ.");
+        console.error(error);
+      }
+    });
 
   </script>
 
