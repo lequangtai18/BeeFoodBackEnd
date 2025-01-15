@@ -7,20 +7,23 @@ const { render } = require("ejs");
 const firebase = require("../firebase/index.js");
 const productModel = require("../models/product.model.js");
 
-exports.getRestaurants = async (req, res, next) => {
+exports.getRestaurants = async (req, res) => {
   try {
-    let list = await restaurantModel.restaurantModel.find();
-    if (list) {
-      return res
-        .status(200)
-        .json({ data: list, msg: "Lấy  dữ liệu restaurant thành công" });
-    } else {
-      return res.status(400).json({ msg: "Không có dữ liệu restaurant" });
+    const list = await restaurantModel.find(); // Lấy tất cả nhà hàng từ cơ sở dữ liệu
+
+    if (list.length === 0) {
+      return res.status(404).json({ msg: "Không có dữ liệu nhà hàng" });
     }
+
+    return res.status(200).json({
+      data: list,
+      msg: "Lấy dữ liệu nhà hàng thành công"
+    });
   } catch (error) {
-    return res.status(500).json({ msg: error.message });
+    return res.status(500).json({ msg: "Lỗi server: " + error.message });
   }
 };
+
 
 exports.editProfile = async (req, res, next) => {
   try {
@@ -453,7 +456,7 @@ exports.unlockRestaurants = async (req, res) => {
     const restaurantId = req.params.id;
     const restaurant = await restaurantModel.restaurantModel.findById(restaurantId);
 
-    if (!restaurant) return res.status(404).json({ success: false, message: 'Nhà hàng không tồn tại!' });
+    if (!restaurant) return res.status(404).json({ success: true, message: 'Nhà hàng không tồn tại!' });
 
     restaurant.isLocked = false;
     await restaurant.save();
