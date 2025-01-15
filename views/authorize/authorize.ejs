@@ -341,7 +341,8 @@
             console.log("Latitude:", lat);
             console.log("Longitude:", lon);
 
-            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`;
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1&timestamp=${Date.now()}`;
+            
             try {
               const response = await fetch(url);
               const data = await response.json();
@@ -375,7 +376,7 @@
         return;
       }
 
-      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&addressdetails=1`;
+      const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1&timestamp=${Date.now()}`;
 
       try {
         const response = await fetch(url);

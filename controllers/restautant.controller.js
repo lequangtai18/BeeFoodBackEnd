@@ -7,23 +7,20 @@ const { render } = require("ejs");
 const firebase = require("../firebase/index.js");
 const productModel = require("../models/product.model.js");
 
-exports.getRestaurants = async (req, res) => {
+exports.getRestaurants = async (req, res, next) => {
   try {
-    const list = await restaurantModel.find(); // Lấy tất cả nhà hàng từ cơ sở dữ liệu
-
-    if (list.length === 0) {
-      return res.status(404).json({ msg: "Không có dữ liệu nhà hàng" });
+    let list = await restaurantModel.restaurantModel.find();
+    if (list) {
+      return res
+        .status(200)
+        .json({ data: list, msg: "Lấy  dữ liệu restaurant thành công" });
+    } else {
+      return res.status(400).json({ msg: "Không có dữ liệu restaurant" });
     }
-
-    return res.status(200).json({
-      data: list,
-      msg: "Lấy dữ liệu nhà hàng thành công"
-    });
   } catch (error) {
-    return res.status(500).json({ msg: "Lỗi server: " + error.message });
+    return res.status(500).json({ msg: error.message });
   }
 };
-
 
 exports.editProfile = async (req, res, next) => {
   try {
