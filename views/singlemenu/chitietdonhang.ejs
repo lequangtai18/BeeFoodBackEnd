@@ -89,9 +89,9 @@
               </tr>
             </thead>
             <tbody>
-              <% for (let i=0; i < data.product.length; i++) { %>
+              <% for (let i = 0; i < data.product.length; i++) { %>
                 <tr>
-                  <% if (i===0) { %>
+                  <% if (i === 0) { %>
                     <td rowspan="<%= data.product.length %>">
                       <%= data._id %>
                     </td>
@@ -104,43 +104,40 @@
                     <td rowspan="<%= data.product.length %>">
                       <%= data.address %>
                     </td>
-                    <% } %>
-                      <td>
-                        <%= data.product[i].name %>
-                      </td>
-                      <td>
-                        <%= data.product[i].quantity %>
-                      </td>
-                      <td>
-                        <%= data.product[i].price %>
-                      </td>
-                      <td rowspan="<%= data.product.length %>">
-                        <% if (data.voucher) { %>
-                          <strong>Tên: <%= data.voucher.name %></strong><br>
-                          Giảm giá: <%= data.voucher.money %> VNĐ<br>
-                          Hạn sử dụng: <%= new Date(data.voucher.hsd).toLocaleDateString() %><br>
-                          <% if (data.voucher.isHetHan) { %>
-                            <span style="color: red;">Đã hết hạn</span>
-                          <% } else { %>
-                            <span style="color: green;">Còn hiệu lực</span>
-                          <% } %>
+                  <% } %>
+                  <td>
+                    <%= data.product[i].name %>
+                  </td>
+                  <td>
+                    <%= data.product[i].quantity %>
+                  </td>
+                  <td>
+                    <%= data.product[i].price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) %>
+                  </td>
+                  <% if (i === 0) { %>
+                    <td rowspan="<%= data.product.length %>">
+                      <% if (data.voucher) { %>
+                        <strong>Tên: <%= data.voucher.name %></strong><br>
+                        Giảm giá: <%= data.voucher.money.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) %><br>
+                        Hạn sử dụng: <%= new Date(data.voucher.hsd).toLocaleDateString() %><br>
+                        <% if (data.voucher.isHetHan) { %>
+                          <span style="color: red;">Đã hết hạn</span>
                         <% } else { %>
-                          Không có voucher
+                          <span style="color: green;">Còn hiệu lực</span>
                         <% } %>
-                      </td>
-                      
-                      
-                      <% if (i===0) { %>
-                        <td rowspan="<%= data.product.length %>">
-                          <%= data.deliveryFee %>
-                        </td>
-                        <% } %>
-                          <td>
-                            <%= data.product[i].quantity * data.product[i].price + (i===0 ? data.deliveryFee : 0) %>
-                          </td>
+                      <% } %>
+                    </td>
+                    <td rowspan="<%= data.product.length %>">
+                      <%= data.deliveryFee.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) %>
+                    </td>
+                  <% } %>
+                  <td>
+                    <%= (data.product[i].quantity * data.product[i].price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) %>
+                  </td>
                 </tr>
-                <% } %>
+              <% } %>
             </tbody>
+            
           </table>
           <div class="order-total">
             <p><strong>Tổng cộng:</strong>
